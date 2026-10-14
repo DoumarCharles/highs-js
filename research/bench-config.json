@@ -1,5 +1,5 @@
 {
-  "candidate": "lto",
+  "candidate": "simd",
   "seeds": "0,1",
   "reps": 2,
   "tiers": "hard,medium",

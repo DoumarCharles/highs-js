@@ -115,18 +115,21 @@ for (const m of manifest) {
           at: new Date().toISOString(),
         };
         rec.absGap = Math.abs(rec.primal - rec.dual);
-        rec.crashed = child.status !== 0 || !status || Boolean(child.signal);
+        // 126/127: the binary could not be executed at all (harness problem,
+        // not a solver crash).
+        rec.harnessError = child.status === 126 || child.status === 127;
+        rec.crashed = !rec.harnessError && (child.status !== 0 || !status || Boolean(child.signal));
         rec.gapReached = status === "Optimal" && rec.absGap <= m.gap + 1e-9 * Math.max(1, Math.abs(rec.primal));
         if (!modelCache.has(m.name)) modelCache.set(m.name, loadModelJson(path.join(modelsDir, `${m.name}.json`)));
         const check = checkSolution(modelCache.get(m.name), readSolution(`${stem}.sol`));
         rec.valid = check.ok;
         rec.checkedObjective = check.objective;
         rec.objectiveMismatch = Math.abs(check.objective - rec.primal) > 1e-6 * Math.max(1, Math.abs(rec.primal));
-        rec.checkProblems = check.problems;
-        if (rec.crashed) rec.tail = (log.split("\n").slice(-15).join("\n") + "\n" + stderr.split("\n").slice(-25).join("\n")).slice(-4000);
+        rec.checkProblems = check.problems.slice(0, 5);
+        if (rec.crashed || rec.harnessError) rec.tail = (log.split("\n").slice(-15).join("\n") + "\n" + stderr.split("\n").slice(-25).join("\n")).slice(-4000);
         fs.appendFileSync(outFile, JSON.stringify(rec) + "\n");
         console.log(
-          `${m.name} seed=${seed} rep=${rep} ${rec.variant}: ${rec.crashed ? `CRASH exit=${rec.exitCode} signal=${rec.signal}` : status} ` +
+          `${m.name} seed=${seed} rep=${rep} ${rec.variant}: ${rec.harnessError ? `HARNESS ERROR exit=${rec.exitCode}` : rec.crashed ? `CRASH exit=${rec.exitCode} signal=${rec.signal}` : status} ` +
             `${(rec.solveMs / 1000).toFixed(2)}s nodes=${rec.nodes} lpIt=${rec.lpIterations} gap=${rec.absGap} root=${rec.rootDual} valid=${rec.valid} rssMB=${(rec.maxRssKb / 1024).toFixed(0)}`,
         );
       }

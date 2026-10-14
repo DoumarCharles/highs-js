@@ -228,7 +228,8 @@ export const INSTANCES = [
   { family: "gap", params: { agents: 8, jobs: 48, seed: 2 }, gap: 10, tier: "hard" }, // ~36 s (proof ~47 s)
   { family: "gap", params: { agents: 10, jobs: 50, seed: 3 }, gap: 20, tier: "hard" }, // ~36 s
   { family: "mkp", params: { n: 150, k: 10, seed: 1 }, gap: 360, tier: "hard" }, // ~28 s
-  { family: "mkp", params: { n: 250, k: 10, seed: 1 }, gap: 320, tier: "hard" }, // ~49 s
+  { family: "gap", params: { agents: 10, jobs: 60, seed: 1 }, gap: 18, tier: "hard" }, // ~34 s (added run 2; gap 17 takes ~130 s)
+  { family: "mkp", params: { n: 200, k: 10, seed: 2 }, gap: 180, tier: "hard" }, // ~64 s (added run 2)
   { family: "lotsize", params: { items: 8, periods: 15, seed: 3 }, gap: 10, tier: "medium" }, // ~15 s
   { family: "lotsize", params: { items: 6, periods: 20, seed: 2 }, gap: 10, tier: "medium" }, // ~14 s
   { family: "gap", params: { agents: 5, jobs: 50, seed: 4 }, gap: 5, tier: "medium" }, // ~9 s

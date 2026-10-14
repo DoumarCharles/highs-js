@@ -131,7 +131,7 @@ if (info("primal_solution_status") === highs.constants.solutionStatus.feasible) 
   out.valid = check.ok;
   out.checkedObjective = check.objective;
   out.objectiveMismatch = Math.abs(check.objective - primal) > 1e-6 * Math.max(1, Math.abs(primal));
-  out.checkProblems = check.problems;
+  out.checkProblems = check.problems.slice(0, 5);
 } else {
   out.valid = false;
   out.checkProblems = ["no feasible solution"];

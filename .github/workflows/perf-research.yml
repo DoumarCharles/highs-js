@@ -88,10 +88,11 @@ jobs:
       - name: Build native HiGHS (same submodule commit, threads enabled)
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ninja-build time
-          cmake -S HiGHS -B native -G Ninja -DCMAKE_BUILD_TYPE=Release -DFAST_BUILD=ON -DZLIB=OFF -DBUILD_TESTING=OFF
+          cmake -S HiGHS -B native -G Ninja -DCMAKE_BUILD_TYPE=Release -DFAST_BUILD=ON -DBUILD_SHARED_LIBS=OFF -DZLIB=OFF -DBUILD_TESTING=OFF
           cmake --build native --target highs-bin 2>/dev/null || cmake --build native
           ls -la native/bin
           native/bin/highs --version
+          ldd native/bin/highs
       - uses: actions/upload-artifact@v4
         with:
           name: native-highs

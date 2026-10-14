@@ -131,7 +131,7 @@ if (native.length) {
   const speedups = Object.fromEntries(configs.map((c) => [c, []]));
   const wasmGap = [];
   for (const [k, rs] of nGroups) {
-    const by = Object.fromEntries(configs.map((c) => [c, rs.filter((r) => r.variant === c && !r.crashed)]));
+    const by = Object.fromEntries(configs.map((c) => [c, rs.filter((r) => r.variant === c && !r.crashed && !r.harnessError)]));
     const tmed = (c) => (by[c].length ? median(by[c].map((r) => r.solveMs)) : null);
     const wb = groups.get(k)?.filter((r) => r.variant === baselineName) ?? [];
     const wbt = wb.length ? median(wb.map((r) => r.solveMs)) : null;
@@ -140,7 +140,7 @@ if (native.length) {
     if (wbt && t1) wasmGap.push(wbt / t1);
     const cell = (c) => {
       const xs = by[c].map((r) => r.solveMs);
-      if (!xs.length) return "**crashed**";
+      if (!xs.length) return "**no result**";
       const flag = by[c].every((r) => r.gapReached) ? "" : " (gap not reached)";
       return `${sec(median(xs))} (${sec(Math.min(...xs))}–${sec(Math.max(...xs))})${flag}`;
     };
@@ -151,11 +151,13 @@ if (native.length) {
   for (const c of configs) {
     const rs = native.filter((r) => r.variant === c);
     const crashes = rs.filter((r) => r.crashed).length;
-    const invalid = rs.filter((r) => !r.crashed && (!r.valid || r.objectiveMismatch)).length;
-    const notReached = rs.filter((r) => !r.crashed && !r.gapReached).length;
+    const harness = rs.filter((r) => r.harnessError).length;
+    const okRuns = rs.filter((r) => !r.crashed && !r.harnessError);
+    const invalid = okRuns.filter((r) => !r.valid || r.objectiveMismatch).length;
+    const notReached = okRuns.filter((r) => !r.gapReached).length;
     const nodeVariants = [...nGroups.values()].filter((g) => new Set(g.filter((r) => r.variant === c && !r.crashed).map((r) => `${r.nodes}/${r.lpIterations}`)).size > 1).length;
     const rss = rs.filter((r) => r.maxRssKb).map((r) => r.maxRssKb / 1024);
-    out(`- **${c}**: ${rs.length} runs, ${crashes} crashed, ${invalid} invalid, ${notReached} stopped short of the gap; repeat runs with different search paths in ${nodeVariants} of ${nGroups.size} model-seed groups (non-determinism); median max RSS ${rss.length ? median(rss).toFixed(0) : "–"} MB` +
+    out(`- **${c}**: ${rs.length} runs, ${crashes} solver crashes, ${harness} harness errors, ${invalid} invalid, ${notReached} stopped short of the gap; repeat runs with different search paths in ${nodeVariants} of ${nGroups.size} model-seed groups (non-determinism); median max RSS ${rss.length ? median(rss).toFixed(0) : "–"} MB` +
       (c !== "native-t1" && speedups[c].length ? `; geometric-mean speed-up over native-t1 ${geomean(speedups[c]).toFixed(2)}× (min ${Math.min(...speedups[c]).toFixed(2)}×, max ${Math.max(...speedups[c]).toFixed(2)}×)` : ""));
   }
   if (wasmGap.length) out(`- Wasm ${baselineName} / native single-thread: geometric mean ${geomean(wasmGap).toFixed(2)}×`);
