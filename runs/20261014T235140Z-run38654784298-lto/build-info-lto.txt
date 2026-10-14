@@ -1,0 +1,16 @@
+variant: lto
+extra cmake args: -DCMAKE_C_FLAGS=-flto -DCMAKE_CXX_FLAGS=-flto
+extra link flags: (none)
+emcc: emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.3 (283e2d130132859fde6a4e4c87fd254b38127651)
+HiGHS commit: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+-- Build type: Release
+-- IPO / LTO supported by compiler: YES
+-- IPO / LTO: disabled by default when building a static library; set CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON to enable
+CMAKE_CXX_FLAGS (cache): -flto
+CMAKE_CXX_FLAGS_RELEASE (cache): -O3 -DNDEBUG
+HighsMipSolver.cpp.o magic:  B C 300 336
+compile seconds: 127
+link seconds: 74
+highs.wasm bytes: 3407208
+highs.wasm gzip-9 bytes: 1182603
+highs.wasm sha256: 097ca1ee17e64ae7bcf6a73dc2790c953ce51fb2d4bb42bbaa5086b281b4fda6

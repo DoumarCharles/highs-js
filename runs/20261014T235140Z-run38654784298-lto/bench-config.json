@@ -1,0 +1,9 @@
+{
+  "candidate": "lto",
+  "seeds": "0,1",
+  "reps": 2,
+  "tiers": "hard,medium",
+  "timeLimit": 300,
+  "nativeConfigs": "t1,on2,on4",
+  "nativeReps": 3
+}
