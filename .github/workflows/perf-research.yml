@@ -1,0 +1,144 @@
+# Experimental performance research (branch perf-research only).
+# Builds the production WebAssembly configuration ("baseline") and one
+# candidate from the same HiGHS commit and toolchain, then benchmarks them
+# sequentially on a single runner. Synthetic public models only.
+# Settings: research/bench-config.json. Write-up: research/RESEARCH.md.
+name: Perf research
+
+on:
+  push:
+    branches: [perf-research]
+    paths:
+      - "research/**"
+      - ".github/workflows/perf-research.yml"
+
+concurrency:
+  group: perf-research-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      emsdk: ${{ steps.c.outputs.emsdk }}
+      node: ${{ steps.c.outputs.node }}
+      variants: ${{ steps.c.outputs.variants }}
+      candidate: ${{ steps.c.outputs.candidate }}
+      seeds: ${{ steps.c.outputs.seeds }}
+      reps: ${{ steps.c.outputs.reps }}
+      tiers: ${{ steps.c.outputs.tiers }}
+      time_limit: ${{ steps.c.outputs.time_limit }}
+      native_configs: ${{ steps.c.outputs.native_configs }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: c
+        run: |
+          . ./.env
+          echo "emsdk=$EMSDK_VERSION" >> "$GITHUB_OUTPUT"
+          echo "node=$NODE_VERSION" >> "$GITHUB_OUTPUT"
+          cfg=research/bench-config.json
+          cand=$(jq -r .candidate $cfg)
+          echo "candidate=$cand" >> "$GITHUB_OUTPUT"
+          echo "variants=[\"baseline\",\"$cand\"]" >> "$GITHUB_OUTPUT"
+          echo "seeds=$(jq -r .seeds $cfg)" >> "$GITHUB_OUTPUT"
+          echo "reps=$(jq -r .reps $cfg)" >> "$GITHUB_OUTPUT"
+          echo "tiers=$(jq -r .tiers $cfg)" >> "$GITHUB_OUTPUT"
+          echo "time_limit=$(jq -r .timeLimit $cfg)" >> "$GITHUB_OUTPUT"
+          echo "native_configs=$(jq -r .nativeConfigs $cfg)" >> "$GITHUB_OUTPUT"
+
+  build-wasm:
+    needs: config
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        variant: ${{ fromJSON(needs.config.outputs.variants) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: mymindstorm/setup-emsdk@v16
+        with: { version: "${{ needs.config.outputs.emsdk }}" }
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "${{ needs.config.outputs.node }}"
+          package-manager-cache: false
+      - run: npm ci
+      - name: Build ${{ matrix.variant }}
+        run: bash research/build-variant.sh "${{ matrix.variant }}" "dist/${{ matrix.variant }}"
+      - name: Smoke test
+        run: node research/scripts/smoke.cjs "dist/${{ matrix.variant }}/highs.js"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wasm-${{ matrix.variant }}
+          path: dist/${{ matrix.variant }}
+          if-no-files-found: error
+
+  build-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Build native HiGHS (same submodule commit, threads enabled)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ninja-build time
+          cmake -S HiGHS -B native -G Ninja -DCMAKE_BUILD_TYPE=Release -DFAST_BUILD=ON -DZLIB=OFF -DBUILD_TESTING=OFF
+          cmake --build native --target highs-bin 2>/dev/null || cmake --build native
+          ls -la native/bin
+          native/bin/highs --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-highs
+          path: native/bin/highs
+          if-no-files-found: error
+
+  bench:
+    needs: [config, build-wasm, build-native]
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "${{ needs.config.outputs.node }}"
+          package-manager-cache: false
+      - uses: actions/download-artifact@v4
+        with: { path: dist, pattern: wasm-*, merge-multiple: false }
+      - uses: actions/download-artifact@v4
+        with: { name: native-highs, path: native }
+      - name: Runner
+        run: |
+          sudo apt-get install -y -qq time >/dev/null
+          chmod +x native/highs
+          nproc; lscpu | grep -E "Model name|^CPU\(s\)|Thread|MHz" || true; free -m; node --version
+      - name: Generate synthetic models
+        run: node research/models/generate.mjs models
+      - name: WebAssembly A/B (sequential, alternating order)
+        run: |
+          node research/scripts/bench.mjs \
+            --variants "baseline=dist/wasm-baseline/highs.js,${{ needs.config.outputs.candidate }}=dist/wasm-${{ needs.config.outputs.candidate }}/highs.js" \
+            --models models --seeds "${{ needs.config.outputs.seeds }}" --reps "${{ needs.config.outputs.reps }}" \
+            --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
+            --out results/wasm.jsonl
+      - name: Native reference (threads 1, parallel on with 2 and 4 threads)
+        run: |
+          node research/scripts/native-bench.mjs --highs native/highs --models models \
+            --seeds "${{ needs.config.outputs.seeds }}" --configs "${{ needs.config.outputs.native_configs }}" \
+            --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
+            --out results/native.jsonl
+      - name: Summary
+        if: always()
+        run: |
+          node research/scripts/summarize.mjs --wasm results/wasm.jsonl --native results/native.jsonl \
+            --build-info "dist/wasm-baseline,dist/wasm-${{ needs.config.outputs.candidate }}" | tee results/summary.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: perf-results-${{ needs.config.outputs.candidate }}
+          path: |
+            results
+            dist/*/build-info.txt
