@@ -32,6 +32,7 @@ jobs:
       tiers: ${{ steps.c.outputs.tiers }}
       time_limit: ${{ steps.c.outputs.time_limit }}
       native_configs: ${{ steps.c.outputs.native_configs }}
+      native_reps: ${{ steps.c.outputs.native_reps }}
     steps:
       - uses: actions/checkout@v6
       - id: c
@@ -48,6 +49,7 @@ jobs:
           echo "tiers=$(jq -r .tiers $cfg)" >> "$GITHUB_OUTPUT"
           echo "time_limit=$(jq -r .timeLimit $cfg)" >> "$GITHUB_OUTPUT"
           echo "native_configs=$(jq -r .nativeConfigs $cfg)" >> "$GITHUB_OUTPUT"
+          echo "native_reps=$(jq -r '.nativeReps // 1' $cfg)" >> "$GITHUB_OUTPUT"
 
   build-wasm:
     needs: config
@@ -100,6 +102,8 @@ jobs:
     needs: [config, build-wasm, build-native]
     runs-on: ubuntu-latest
     timeout-minutes: 330
+    permissions:
+      contents: write # only to push results to the perf-research-results branch
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -125,9 +129,11 @@ jobs:
             --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
             --out results/wasm.jsonl
       - name: Native reference (threads 1, parallel on with 2 and 4 threads)
+        if: always()
         run: |
           node research/scripts/native-bench.mjs --highs native/highs --models models \
             --seeds "${{ needs.config.outputs.seeds }}" --configs "${{ needs.config.outputs.native_configs }}" \
+            --reps "${{ needs.config.outputs.native_reps }}" \
             --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
             --out results/native.jsonl
       - name: Summary
@@ -142,3 +148,34 @@ jobs:
           path: |
             results
             dist/*/build-info.txt
+      # Results (synthetic models only) are also committed to the separate
+      # perf-research-results branch so they can be read without artifact
+      # downloads. Never pushes to any other branch.
+      - name: Publish results to perf-research-results
+        if: always()
+        env:
+          TOKEN: ${{ github.token }}
+          CANDIDATE: ${{ needs.config.outputs.candidate }}
+        run: |
+          dir="runs/$(date -u +%Y%m%dT%H%M%SZ)-run${{ github.run_id }}-${CANDIDATE}"
+          mkdir -p "pub/$dir"
+          cp -r results/. "pub/$dir/"
+          for d in dist/wasm-*; do cp "$d/build-info.txt" "pub/$dir/build-info-${d#dist/wasm-}.txt"; done
+          cp research/bench-config.json "pub/$dir/"
+          echo "${{ github.sha }}" > "pub/$dir/source-commit.txt"
+          cd pub
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch -q --depth 1 origin perf-research-results; then
+            git checkout -q -b perf-research-results FETCH_HEAD
+          else
+            git checkout -q --orphan perf-research-results
+          fi
+          git add -A runs
+          git commit -q -m "perf results run ${{ github.run_id }} (${CANDIDATE})"
+          for i in 1 2 3; do
+            git push -q origin HEAD:perf-research-results && break
+            git fetch -q --depth 1 origin perf-research-results && git rebase -q FETCH_HEAD
+          done

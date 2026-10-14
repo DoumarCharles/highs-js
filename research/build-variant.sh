@@ -24,10 +24,13 @@ case "$variant" in
   # existing -flto link step can optimize across HiGHS translation units.
   lto)
     EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-flto -DCMAKE_CXX_FLAGS=-flto) ;;
-  # WebAssembly SIMD (auto-vectorization; no fast-math, results unchanged).
+  # WebAssembly SIMD (auto-vectorization, no fast-math; path identity is measured, not assumed).
   simd)
     EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-msimd128 -DCMAKE_CXX_FLAGS=-msimd128)
     EXTRA_LINK_FLAGS=(-msimd128) ;;
+  # Larger initial heap (256 MB instead of 16 MB): fewer memory.grow steps.
+  initmem256)
+    EXTRA_LINK_FLAGS=(-sINITIAL_MEMORY=256MB) ;;
   # 4 GB Wasm memory ceiling instead of the 2 GB default.
   mem4g)
     EXTRA_LINK_FLAGS=(-sMAXIMUM_MEMORY=4GB) ;;

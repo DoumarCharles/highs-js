@@ -55,14 +55,23 @@ const callbacks = {};
 let improving = 0;
 let logLines = 0;
 let lastLog = null;
+let rootDual = null; // dual bound at the end of the root node (last log line with 0 nodes)
+let firstPrimal = null;
+let firstPrimalMs = null;
+let t0 = 0;
 if (callbacksMode === "production") {
   const { callbackType } = highs.constants;
   callbacks[callbackType.mipImprovingSolution] = ({ data }) => {
     // An app copies the solution vector out on every improvement.
     if (data.mip_solution) improving += data.mip_solution.length > 0 ? 1 : 0;
+    if (firstPrimal === null) {
+      firstPrimal = data.objective_function_value;
+      firstPrimalMs = performance.now() - t0;
+    }
   };
   callbacks[callbackType.mipLogging] = ({ data }) => {
     logLines += 1;
+    if (Number(data.mip_node_count) === 0) rootDual = data.mip_dual_bound;
     lastLog = {
       primal: data.mip_primal_bound,
       dual: data.mip_dual_bound,
@@ -80,7 +89,7 @@ model.options.set({
   time_limit: timeLimit,
 });
 
-const t0 = performance.now();
+t0 = performance.now();
 const { modelStatus } = model.run(callbacks);
 const solveMs = performance.now() - t0;
 
@@ -101,6 +110,11 @@ const out = {
   primal,
   dual,
   absGap: Math.abs(primal - dual),
+  // Production-gap compliance: stopped because the absolute gap was reached.
+  gapReached: statusName === "optimal" && Math.abs(primal - dual) <= gap + 1e-9 * Math.max(1, Math.abs(primal)),
+  rootDual,
+  firstPrimal,
+  firstPrimalMs,
   mipGapPct: info("mip_gap"),
   improvingCallbacks: improving,
   logCallbacks: logLines,
