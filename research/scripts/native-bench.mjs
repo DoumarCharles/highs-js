@@ -117,7 +117,7 @@ for (const m of manifest) {
         rec.absGap = Math.abs(rec.primal - rec.dual);
         // 126/127: the binary could not be executed at all (harness problem,
         // not a solver crash).
-        rec.harnessError = child.status === 126 || child.status === 127;
+        rec.harnessError = Boolean(child.error) || child.status === 126 || child.status === 127;
         rec.crashed = !rec.harnessError && (child.status !== 0 || !status || Boolean(child.signal));
         rec.gapReached = status === "Optimal" && rec.absGap <= m.gap + 1e-9 * Math.max(1, Math.abs(rec.primal));
         if (!modelCache.has(m.name)) modelCache.set(m.name, loadModelJson(path.join(modelsDir, `${m.name}.json`)));
