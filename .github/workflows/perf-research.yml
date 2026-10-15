@@ -147,6 +147,7 @@ jobs:
       - name: Diagnose threaded solves
         if: needs.config.outputs.diagnose == 'true'
         run: |
+          set +e  # every combination must run, including the failing ones
           mkdir -p results
           printf 'Maximize\n obj: x + 2 y\nSubject To\n c1: x + y <= 4\nBounds\n 0 <= x <= 3\nGenerals\n x y\nEnd\n' > models/tiny.lp
           for b in dist/wasm-*; do
@@ -155,7 +156,8 @@ jobs:
               for t in 1 2 4; do
                 echo "=== $b model=$m threads=$t ===" | tee -a results/diagnose.txt
                 timeout 120 node --trace-uncaught --stack-trace-limit=60 research/scripts/repro-threads.cjs "$b/highs.js" "models/$m.lp" $t 5 \
-                  > results/diag-one.txt 2>&1; echo "node exit status $?" >> results/diag-one.txt
+                  > results/diag-one.txt 2>&1
+                echo "node exit status $?" >> results/diag-one.txt
                 grep -v "^\[out\] *[A-Z ] *[0-9]" results/diag-one.txt | tail -n 150 | tee -a results/diagnose.txt
               done
             done
