@@ -259,10 +259,11 @@ async function verifyThreads(h, n, parallel) {
   return { ok, details: `HiGHS header ${JSON.stringify(header)} (expected ${n} threads, ${expectWorkers} workers); pthreads running during solve ${maxRunning} (expected ${n - 1}); CPU/wall ${cpuWall.toFixed(2)}; ${statusName(h, modelStatus)} in ${(ms / 1000).toFixed(1)} s; valid ${check.ok}` };
 }
 
+const stderrLines = [];
 async function load() {
   const loadHighs = createRequire(import.meta.url)(modulePath);
   const t0 = performance.now();
-  const h = await loadHighs({ print: () => {}, printErr: () => {} });
+  const h = await loadHighs({ print: () => {}, printErr: (s) => stderrLines.push(String(s)) });
   return { h, loadMs: performance.now() - t0 };
 }
 
@@ -286,7 +287,7 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     result = await TESTS[args.test](h);
     result.loadMs = loadMs;
   } catch (e) {
-    result = { ok: false, details: `exception: ${String(e?.stack ?? e).slice(0, 600)}` };
+    result = { ok: false, details: `exception: ${typeof e === "string" ? `thrown string "${e}"` : String(e?.stack ?? e).slice(0, 600)}; stderr: ${stderrLines.slice(-8).join(" / ").slice(0, 800)}` };
   }
   fs.writeSync(1, JSON.stringify(result) + "\n");
   process.exit(0);

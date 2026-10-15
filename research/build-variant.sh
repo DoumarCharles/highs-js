@@ -80,6 +80,17 @@ if [ "$GUARD_GLUE" = 1 ]; then
   done
   POST_JS="$bdir/post-main-thread-only.js"
   EXT_JS="$bdir/extended-main-thread-only.js"
+  # The extended API deliberately rejects thread/parallel/concurrency options
+  # ("single-threaded data-only API"). The threaded variant lifts only that
+  # one rule, in the generated copy, so `threads` and `parallel` can be set.
+  rule='/thread|parallel|concurr/i.test(name) ||'
+  [ "$(grep -cF "$rule" "$EXT_JS")" = 1 ] || { echo "threading option rule not found in extended.js" >&2; exit 1; }
+  python3 - "$EXT_JS" "$rule" <<'PY'
+import sys
+path, rule = sys.argv[1], sys.argv[2]
+text = open(path).read()
+open(path, "w").write(text.replace(rule, "/concurr/i.test(name) ||", 1))
+PY
 fi
 
 cd "$bdir"
@@ -138,6 +149,7 @@ wasminfo="$(node "$root/research/scripts/wasm-info.mjs" "$out/highs.wasm")"
   echo "extra cmake args: ${EXTRA_CMAKE_ARGS[*]:-(none)}"
   echo "extra link flags: ${EXTRA_LINK_FLAGS[*]:-(none)}"
   echo "JS glue guarded to main runtime thread: $GUARD_GLUE"
+  echo "extended API option rule: $(grep -oE '/[a-z|]*concurr/i.test\(name\)' "$EXT_JS")"
   echo "emcc: $(emcc --version | head -n 1)"
   echo "HiGHS commit: $(git -C "$root/HiGHS" rev-parse HEAD)"
   grep -E "Build type|IPO / LTO|perf-research:" cmake-configure.log || true
