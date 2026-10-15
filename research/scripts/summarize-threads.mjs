@@ -150,7 +150,7 @@ if (failed.length || notes.length) {
   out();
 }
 
-for (const [file, title] of [[args.api, "pthreads build"], [args["api-baseline"], "single-thread baseline build, same build-independent tests"]]) {
+for (const [file, title] of [[args.api, "pthreads build"], [args["api-baseline"], "single-thread baseline build, same build-independent tests"], [args["api-dbg"], "pthreads diagnostic build (assertions), out-of-memory tests"]]) {
   if (!file || !fs.existsSync(file)) continue;
   const api = JSON.parse(fs.readFileSync(file, "utf8"));
   out(`## JavaScript interface and callback tests (${title})`);

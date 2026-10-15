@@ -1,7 +1,11 @@
 {
-  "label": "pthreads-api",
+  "label": "pthreads-api2",
   "candidate": "pthreads",
-  "builds": ["baseline", "pthreads"],
+  "builds": [
+    "baseline",
+    "pthreads",
+    "pthreads-dbg"
+  ],
   "wasmVariants": "baseline=baseline",
   "apiTest": true,
   "diagnose": false,

@@ -84,7 +84,7 @@ const TESTS = {
   // thread count changed without disposing: HiGHS refuses (global scheduler).
   async "rerun-and-thread-change"(h) {
     const model = h.createModel({ format: "lp", data: lpOf(SMALL) });
-    const base = { output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(SMALL), time_limit: 10 };
+    const base = { output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(SMALL), time_limit: 120 };
     model.options.set({ ...base, threads: 4, parallel: "on" });
     const r1 = statusName(h, model.run().modelStatus);
     const v1 = checkModel(model, SMALL).ok;
@@ -102,7 +102,7 @@ const TESTS = {
     }
     model.dispose();
     // After dispose the scheduler is torn down, so 2 threads now works.
-    const after = solveOnce(h, SMALL, { threads: 2, parallel: "on", time_limit: 10 });
+    const after = solveOnce(h, SMALL, { threads: 2, parallel: "on", time_limit: 120 });
     const ok = v1 && v2 && after.valid;
     return { ok, details: `run1 ${r1} valid ${v1}; run2 ${r2} valid ${v2}; threads 4→2 without dispose: ${r3error ? `throws "${r3error}"` : `status ${r3}`}; after dispose threads=2: ${after.status} valid ${after.valid}, CPU/wall ${after.cpuWall.toFixed(2)}` };
   },
@@ -193,9 +193,9 @@ const TESTS = {
     model.options.set({ random_seed: 7 });
     go("clearSolver+seed7");
     model.clearSolver();
-    model.resetOptions();
+    model.options.reset();
     model.options.set(opts);
-    go("resetOptions");
+    go("options.reset");
     model.dispose();
     const ok = runs.every((r) => r.valid && r.gap);
     return { ok, details: JSON.stringify(runs) + `; pthreads after dispose ${JSON.stringify(stats(h))}` };
@@ -220,18 +220,23 @@ const TESTS = {
   // capped (RESEARCH_MEMORY_CAP_MB) before loading, so the solve runs out of
   // Wasm memory part-way. Records what happens and whether the runtime can
   // still solve afterwards. pthreads build only (its memory is created in JS).
-  async "oom-threads-1"(h) { return oomTest(h, 1); },
-  async "oom-threads-4"(h) { return oomTest(h, 4); },
+  async "oom-threads-1-cap40"(h) { return oomTest(h, 1); },
+  async "oom-threads-4-cap40"(h) { return oomTest(h, 4); },
+  async "oom-threads-4-cap64"(h) { return oomTest(h, 4); },
+  async "oom-threads-4-cap96"(h) { return oomTest(h, 4); },
+  async "oom-threads-4-nocap"(h) { return oomTest(h, 4); },
 
   // The legacy one-shot API with threads.
   async "legacy-solve"(h) {
     const out = [];
     for (let i = 0; i < 2; i += 1) {
       const t0 = performance.now();
-      const r = h.solve(lpOf(SMALL), { threads: 4, parallel: "on", time_limit: 10, mip_rel_gap: 0, mip_abs_gap: gapOf(SMALL), output_flag: false });
-      out.push({ status: r.Status, obj: r.ObjectiveValue, ms: performance.now() - t0 });
+      const r = h.solve(lpOf(SMALL), { ...threadOpts(h, 4), time_limit: 120, mip_rel_gap: 0, mip_abs_gap: gapOf(SMALL), output_flag: false });
+      const values = new Map(Object.entries(r.Columns ?? {}).map(([name, c]) => [name, c.Primal]));
+      const check = checkSolution(loadModelJson(path.join(modelsDir, `${SMALL}.json`)), values);
+      out.push({ status: r.Status, obj: r.ObjectiveValue, valid: check.ok, ms: Math.round(performance.now() - t0) });
     }
-    const ok = out.every((r) => r.status === "Optimal" && Number.isFinite(r.obj));
+    const ok = out.every((r) => r.status === "Optimal" && Number.isFinite(r.obj) && r.valid);
     return { ok, details: `${JSON.stringify(out)}; pthreads ${JSON.stringify(stats(h))}` };
   },
 
@@ -316,12 +321,22 @@ async function oomTest(h, n) {
   const model = h.createModel({ format: "lp", data: lpOf(MEDIUM) });
   model.options.set({ output_flag: false, mip_rel_gap: 0, mip_abs_gap: 0, ...threadOpts(h, n), time_limit: 120 });
   let outcome;
+  let logs = 0;
+  let lastNodes = 0;
+  const t0 = performance.now();
   try {
-    const status = statusName(h, model.run().modelStatus);
+    const status = statusName(h, model.run({ [h.constants.callbackType.mipLogging]: ({ data }) => { logs += 1; lastNodes = Number(data.mip_node_count); } }).modelStatus);
     outcome = `run returned ${status}`;
   } catch (e) {
-    outcome = `run threw ${typeof e === "string" ? `"${e}"` : `${e?.name}: ${String(e?.message ?? e).slice(0, 200)}`}`;
+    let what = `${e?.constructor?.name}: ${String(e?.message ?? e).slice(0, 200)}`;
+    if (typeof WebAssembly.Exception === "function" && e instanceof WebAssembly.Exception && typeof h.getExceptionMessage === "function") {
+      try {
+        what += ` [C++: ${JSON.stringify(h.getExceptionMessage(e))}]`;
+      } catch {}
+    }
+    outcome = `run threw ${typeof e === "string" ? `"${e}"` : what}`;
   }
+  outcome += ` after ${(performance.now() - t0).toFixed(0)} ms (${logs} MIP log lines, last node count ${lastNodes}; peak pthreads ${JSON.stringify(stats(h))})`;
   let disposed = "ok";
   try {
     model.dispose();
@@ -336,7 +351,7 @@ async function oomTest(h, n) {
     after = `threw ${typeof e === "string" ? `"${e}"` : String(e?.message ?? e).slice(0, 160)}`;
   }
   // Informational: pass means the process survived and reported something.
-  return { ok: true, details: `cap ${process.env.RESEARCH_MEMORY_CAP_MB} MB, threads ${n}: ${outcome}; dispose ${disposed}; tiny solve afterwards: ${after}; stderr: ${stderrLines.slice(-4).join(" / ").slice(0, 400)}` };
+  return { ok: true, details: `cap ${capMatch ? `${capMatch[1]} MB` : "none (2 GB)"}, threads ${n}: ${outcome}; dispose ${disposed}; tiny solve afterwards: ${after}; stderr: ${stderrLines.slice(-4).join(" / ").slice(0, 400)}` };
 }
 
 function stats(h) {
@@ -399,8 +414,10 @@ async function verifyThreads(h, n, parallel) {
 }
 
 const stderrLines = [];
-if (args.test?.startsWith("oom")) {
-  const capPages = Math.floor((Number(process.env.RESEARCH_MEMORY_CAP_MB || 40) * 1048576) / 65536);
+const capMatch = /cap(\d+)$/.exec(args.test ?? "");
+if (capMatch) {
+  process.env.RESEARCH_MEMORY_CAP_MB = capMatch[1];
+  const capPages = Math.floor((Number(capMatch[1]) * 1048576) / 65536);
   const Orig = WebAssembly.Memory;
   WebAssembly.Memory = class CappedMemory extends Orig {
     constructor(d) {

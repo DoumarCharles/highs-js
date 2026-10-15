@@ -77,7 +77,7 @@ case "$variant" in
     EXTRA_CMAKE_ARGS=("-DCMAKE_C_FLAGS=-pthread -fwasm-exceptions" "-DCMAKE_CXX_FLAGS=-pthread -fwasm-exceptions")
     EXTRA_LINK_FLAGS=(-pthread -fwasm-exceptions -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
       -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648 -sASSERTIONS=2
-      -sPTHREADS_DEBUG=1 --profiling-funcs)
+      -sPTHREADS_DEBUG=1 --profiling-funcs -sEXPORT_EXCEPTION_HANDLING_HELPERS=1)
     EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
   *) echo "unknown variant: $variant" >&2; exit 2 ;;
 esac

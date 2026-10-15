@@ -171,11 +171,17 @@ jobs:
           only="${{ needs.config.outputs.api_only }}"
           node research/scripts/pthread-api-test.mjs --module dist/wasm-pthreads/highs.js \
             --models models --out results/api-test.json ${only:+--only "$only"}
+          # Out-of-memory tests again on the diagnostic build, which can name the C++ exception.
+          if [ -f dist/wasm-pthreads-dbg/highs.js ]; then
+            node research/scripts/pthread-api-test.mjs --module dist/wasm-pthreads-dbg/highs.js \
+              --models models --out results/api-test-dbg.json \
+              --only "oom-threads-1-cap40,oom-threads-4-cap40,oom-threads-4-cap64,oom-threads-4-cap96"
+          fi
           # The same build-independent tests on the single-thread baseline, for comparison.
           if [ -f dist/wasm-baseline/highs.js ]; then
             node research/scripts/pthread-api-test.mjs --module dist/wasm-baseline/highs.js \
               --models models --out results/api-test-baseline.json \
-              --only "interrupt-immediate,user-solution,solver-reset,malformed-lp,callback-mipLogging,callback-mipImprovingSolution"
+              --only "interrupt-immediate,user-solution,solver-reset,malformed-lp,legacy-solve,callback-mipLogging,callback-mipImprovingSolution"
           fi
       - name: WebAssembly benchmark (sequential, rotating order)
         if: always()
@@ -206,7 +212,7 @@ jobs:
           infos=$(ls -d dist/wasm-* | paste -sd, -)
           if [ "${{ needs.config.outputs.summarizer }}" = "threads" ]; then
             node research/scripts/summarize-threads.mjs --wasm results/wasm.jsonl --api results/api-test.json \
-              --api-baseline results/api-test-baseline.json \
+              --api-baseline results/api-test-baseline.json --api-dbg results/api-test-dbg.json \
               --build-info "$infos" | tee results/summary.md
           else
             node research/scripts/summarize.mjs --wasm results/wasm.jsonl --native results/native.jsonl \
