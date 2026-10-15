@@ -137,7 +137,7 @@ jobs:
             --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
             --out results/wasm.jsonl
       - name: Native reference (threads 1, parallel on with 2 and 4 threads)
-        if: always()
+        if: always() && needs.config.outputs.native_configs != 'none'
         run: |
           node research/scripts/native-bench.mjs --highs native/highs --models models \
             --seeds "${{ needs.config.outputs.seeds }}" --configs "${{ needs.config.outputs.native_configs }}" \

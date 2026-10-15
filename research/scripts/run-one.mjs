@@ -48,6 +48,9 @@ const loadStart = performance.now();
 const loadHighs = createRequire(import.meta.url)(modulePath);
 const highs = await loadHighs({ print: () => {}, printErr: () => {} });
 const loadMs = performance.now() - loadStart;
+// Startup memory: process RSS and Wasm memory size right after instantiation.
+const rssAfterLoadKb = Math.round(process.memoryUsage().rss / 1024);
+const wasmBytesAfterLoad = wasmMemory ? wasmMemory.buffer.byteLength : null;
 
 const lp = fs.readFileSync(args.lp, "utf8");
 const model = highs.createModel({ format: "lp", data: lp });
@@ -120,6 +123,8 @@ const out = {
   logCallbacks: logLines,
   lastLog,
   wasmMemoryBytes: wasmMemory ? wasmMemory.buffer.byteLength : null,
+  wasmBytesAfterLoad,
+  rssAfterLoadKb,
   maxRssKb: process.resourceUsage().maxRSS,
 };
 

@@ -86,6 +86,9 @@ for (const m of manifest) {
         const child = spawnSync(hasGnuTime ? "/usr/bin/time" : args.highs, hasGnuTime ? ["-v", args.highs, ...highsArgs] : highsArgs, {
           encoding: "utf8",
           maxBuffer: 256 * 1024 * 1024,
+          // A run that ignores its time limit by more than 2 minutes is hung.
+          timeout: (timeLimit + 120) * 1000,
+          killSignal: "SIGKILL",
         });
         const wallMs = performance.now() - t0;
         const log = child.stdout || "";
@@ -117,7 +120,8 @@ for (const m of manifest) {
         rec.absGap = Math.abs(rec.primal - rec.dual);
         // 126/127: the binary could not be executed at all (harness problem,
         // not a solver crash).
-        rec.harnessError = Boolean(child.error) || child.status === 126 || child.status === 127;
+        rec.hung = child.error?.code === "ETIMEDOUT";
+        rec.harnessError = !rec.hung && (Boolean(child.error) || child.status === 126 || child.status === 127);
         rec.crashed = !rec.harnessError && (child.status !== 0 || !status || Boolean(child.signal));
         rec.gapReached = status === "Optimal" && rec.absGap <= m.gap + 1e-9 * Math.max(1, Math.abs(rec.primal));
         if (!modelCache.has(m.name)) modelCache.set(m.name, loadModelJson(path.join(modelsDir, `${m.name}.json`)));

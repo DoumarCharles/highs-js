@@ -134,6 +134,74 @@ Native runs in this job did not execute (exit 127: the native binary was linked
 against `libhighs.so`, which was not in the artifact). Fixed by linking
 statically from run 2 on; no native numbers are taken from run 1.
 
+### Model set change after run 1
+
+On the runner, `mkp_n250_m10_s1` took 2.6 s in Wasm, too easy for the hard
+tier. It was replaced by `gapd_a10_j60_s1` (gap 18) and `mkp_n200_m10_s2`
+(gap 180). Runs 2+ use 8 models.
+
+### Experiment 2 — WebAssembly SIMD: **rejected**
+
+Run 38658782912 (commit b547b9c), 8 models × seeds 0, 1 × 2 repetitions, ABBA.
+
+- **Build:** with `-O3 -msimd128`, Emscripten 6.0.3's clang **crashes
+  (signal 11) compiling `mip/HighsSearch.cpp`** (run 38658172432). That one file
+  is compiled without SIMD (`research/simd-exclude.cmake`); every other HiGHS
+  file, the bridge and the link use `-msimd128`. A compiler crash in production
+  would need a newer Emscripten or an upstream report; not pursued given the
+  result.
+- **Search paths identical** in all 16 pairs.
+- **Time:** geometric mean **−0.7 %** (hard tier −0.7 %); per-pair −2.5 % …
+  +2.0 %. Total 677.3 s → 673.7 s.
+- Binary 3,531,385 → 3,584,601 bytes (+1.5 %), gzip +1.7 %. Memory unchanged.
+- All solutions valid; all runs stopped at the production gap.
+
+Interpretation: HiGHS's MIP time is sparse, index-driven work (bound
+propagation, sparse LU, pricing over index lists) that the auto-vectorizer
+cannot use. Not a material gain.
+
+### Native HiGHS parallel MIP scaling (run 38658782912)
+
+Same runner (4 vCPU), same HiGHS commit, statically linked native binary,
+8 models × 2 seeds × {threads 1, `parallel=on` threads 2, `parallel=on`
+threads 4} × 3 repetitions, each solve a fresh process, config order rotated.
+
+**Stability:** 144 solves, **0 crashes, 0 hangs, 0 invalid solutions**.
+Repetitions were deterministic: the same configuration and seed always gave the
+same nodes and LP iterations, with times within about 1–2 %. One model-seed
+group differed only because all three `on2` runs hit the 300 s time limit.
+
+| | threads 1 | `parallel=on`, 2 threads | `parallel=on`, 4 threads |
+|---|---|---|---|
+| Hard pairs faster than threads 1 | — | 5 of 10 | **9 of 10** |
+| Speed-up, geometric mean, hard tier | 1.00× | 1.49× | **3.36×** |
+| …excluding `mkp_n200_m10_s2` (threads 1 took an unlucky 228–292 s path) | 1.00× | 1.48× (0.43–4.21×) | **2.15× (0.59–5.31×)** |
+| Total over all 16 model-seed pairs | 765 s | 563 s | 146 s |
+| Median max RSS | 65 MB | 94 MB | 127 MB |
+| Stopped short of the gap | 0 | 3 (time limit, `mkp_n200` seed 0, 1.2 GB RSS) | 0 |
+
+- 4 threads helped consistently; 2 threads did not (as often slower as
+  faster). HiGHS runs ⌈1.7 × threads⌉ search workers, so 2 threads means 4
+  workers sharing 2 cores.
+- Parallel search changes the search path, so part of every difference is
+  path luck, not throughput. Up to 27.7× on one model shows how large that part
+  can be.
+
+**Native vs WebAssembly, single thread.** The two take *different search
+paths* on the same model and seed. The standard libraries differ (libstdc++ vs
+libc++: sort tie-breaking, hashing), so per-model time comparisons are
+misleading: `mkp_n200_m10_s2` seed 0 took 292 s native and 33 s in Wasm.
+Throughput is the meaningful comparison. Native does **1.25× the LP iterations
+per second** (geometric mean, range 1.10–1.45×) and 1.15× the nodes per second.
+So the pure code-generation gap is about 20–25 %, not 2×. No compiler flag can
+recover more than that. Any much larger native-vs-Wasm difference seen in
+earlier testing is most likely search-path variance (or threads), not raw speed.
+
+**Conclusion for threading:** the only measured mechanism with multi-fold
+gains, roughly 2–3× at 4 threads on these models. It is stable and
+deterministic natively. It costs about 2× memory at 4 threads. Its value
+depends on users having ≥4 cores. 2 threads is not worth it.
+
 ## 5. Reproducing
 
 ```sh

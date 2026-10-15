@@ -1,9 +1,9 @@
 {
-  "candidate": "simd",
+  "candidate": "initmem256",
   "seeds": "0,1",
   "reps": 2,
   "tiers": "hard,medium",
   "timeLimit": 300,
-  "nativeConfigs": "t1,on2,on4",
-  "nativeReps": 3
+  "nativeConfigs": "none",
+  "nativeReps": 1
 }

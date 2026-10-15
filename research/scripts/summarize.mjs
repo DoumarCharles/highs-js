@@ -101,6 +101,11 @@ for (const cand of candidates) {
   out();
   const totalB = ok.filter((r) => r.variant === baselineName).reduce((a, r) => a + r.solveMs, 0);
   const totalC = ok.filter((r) => r.variant === cand).reduce((a, r) => a + r.solveMs, 0);
+  const startup = (v) => {
+    const rs = ok.filter((r) => r.variant === v && r.rssAfterLoadKb);
+    return rs.length ? `${v} Wasm ${mb(median(rs.map((r) => r.wasmBytesAfterLoad)))} MB / RSS ${(median(rs.map((r) => r.rssAfterLoadKb)) / 1024).toFixed(0)} MB` : null;
+  };
+  if (startup(baselineName) && startup(cand)) out(`Startup memory right after loading (median): ${startup(baselineName)}; ${startup(cand)}.`);
   out(`Total solve time: ${baselineName} ${sec(totalB)} s, ${cand} ${sec(totalC)} s. Median module load (compile+instantiate): ${baselineName} ${median(ok.filter((r) => r.variant === baselineName).map((r) => r.loadMs)).toFixed(0)} ms, ${cand} ${median(ok.filter((r) => r.variant === cand).map((r) => r.loadMs)).toFixed(0)} ms.`);
   out();
 }
