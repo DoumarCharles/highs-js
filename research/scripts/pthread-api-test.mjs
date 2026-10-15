@@ -130,6 +130,99 @@ const TESTS = {
     return { ok: vb && vb2, details: `A ${ra}; B (shares A's scheduler) ${rb} valid ${vb}; B re-run after A disposed: ${err ? `throws "${err}"` : `${rb2} valid ${vb2}`}; pthreads now ${JSON.stringify(stats(h))}` };
   },
 
+  // Interrupt at the very first mipInterrupt call (before any incumbent).
+  async "interrupt-immediate"(h) {
+    const model = h.createModel({ format: "lp", data: lpOf(MEDIUM) });
+    model.options.set({ output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(MEDIUM), ...threadOpts(h, 4), time_limit: 120 });
+    let calls = 0;
+    const t0 = performance.now();
+    const { modelStatus } = model.run({ [h.constants.callbackType.mipInterrupt]: (event) => { calls += 1; event.interrupt(); } });
+    const ms = performance.now() - t0;
+    const status = statusName(h, modelStatus);
+    model.dispose();
+    const after = stats(h);
+    const again = solveOnce(h, SMALL, { ...threadOpts(h, 4), time_limit: 120 });
+    const ok = status === "interrupted" && calls === 1 && again.valid && again.gapOk && (after === null || after.running === 0);
+    return { ok, details: `status ${status} after ${ms.toFixed(0)} ms, ${calls} interrupt call(s); pthreads after dispose ${JSON.stringify(after)}; next solve ${again.status}, valid ${again.valid}, gap reached ${again.gapOk}` };
+  },
+
+  // Solution injection through mipUserSolution: a known good solution (from a
+  // first solve of the same model) is offered at the first query. Run on both
+  // builds; "accepted" means HiGHS adopted it as an incumbent.
+  async "user-solution"(h) {
+    const { callbackType } = h.constants;
+    const first = h.createModel({ format: "lp", data: lpOf(MEDIUM) });
+    first.options.set({ output_flag: false, mip_rel_gap: 0, mip_abs_gap: gapOf(MEDIUM), ...threadOpts(h, 4), time_limit: 120 });
+    first.run();
+    const best = Array.from(first.getSolution().colValue);
+    const bestObj = first.info.get("objective_function_value");
+    first.dispose();
+    const model = h.createModel({ format: "lp", data: lpOf(MEDIUM) });
+    model.options.set({ output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(MEDIUM), ...threadOpts(h, 4), time_limit: 120 });
+    const offered = [];
+    const improving = [];
+    const userLines = [];
+    const { modelStatus } = model.run({
+      [callbackType.mipUserSolution]: (event) => {
+        if (offered.length === 0) offered.push({ origin: event.data?.external_solution_query_origin, status: event.setSolution(best) });
+        else offered.push({ origin: event.data?.external_solution_query_origin, status: "not offered" });
+      },
+      [callbackType.mipImprovingSolution]: ({ data }) => improving.push(data.objective_function_value),
+      [callbackType.logging]: ({ message }) => { if (/^\s*X\s/.test(message)) userLines.push(message.trim().slice(0, 80)); },
+    });
+    const status = statusName(h, modelStatus);
+    const check = checkModel(model, MEDIUM);
+    model.dispose();
+    const accepted = userLines.length > 0 || (improving.length > 0 && Math.abs(improving[0] - bestObj) < 1e-6);
+    return { ok: check.ok && offered.length > 0, details: `queries ${offered.length}; first offer ${JSON.stringify(offered[0])}; injected objective ${bestObj}; first improving objectives ${JSON.stringify(improving.slice(0, 3))}; log lines with source X ${userLines.length}; accepted ${accepted}; final ${status}, valid ${check.ok}` };
+  },
+
+  // Solver reset on one model: run, clearSolver + new seed, resetOptions +
+  // options again; each run valid and at its gap.
+  async "solver-reset"(h) {
+    const model = h.createModel({ format: "lp", data: lpOf(SMALL) });
+    const opts = { output_flag: false, mip_rel_gap: 0, mip_abs_gap: gapOf(SMALL), ...threadOpts(h, 4), time_limit: 120 };
+    const runs = [];
+    const go = (label) => {
+      const status = statusName(h, model.run().modelStatus);
+      runs.push({ label, status, valid: checkModel(model, SMALL).ok, gap: gapReached(h, model, SMALL, status), nodes: Number(model.info.get("mip_node_count")) });
+    };
+    model.options.set(opts);
+    go("first");
+    model.clearSolver();
+    model.options.set({ random_seed: 7 });
+    go("clearSolver+seed7");
+    model.clearSolver();
+    model.resetOptions();
+    model.options.set(opts);
+    go("resetOptions");
+    model.dispose();
+    const ok = runs.every((r) => r.valid && r.gap);
+    return { ok, details: JSON.stringify(runs) + `; pthreads after dispose ${JSON.stringify(stats(h))}` };
+  },
+
+  // C++ exception propagation: HiGHS's LP reader reports syntax errors by
+  // throwing std::invalid_argument and catching it. Expect a JS error, and a
+  // runtime that still solves afterwards. Run on both builds.
+  async "malformed-lp"(h) {
+    let error = null;
+    try {
+      const m = h.createModel({ format: "lp", data: "Minimize\n obj: x +\nSubject To\n c1: x >= = 1\nEnd\n" });
+      m.dispose();
+    } catch (e) {
+      error = `${e?.name}: ${String(e?.message ?? e).slice(0, 160)}`;
+    }
+    const again = solveOnce(h, SMALL, { ...threadOpts(h, 4), time_limit: 120 });
+    return { ok: error !== null && again.valid && again.gapOk, details: `malformed LP -> ${error ?? "no error raised"}; next solve ${again.status} valid ${again.valid} gap ${again.gapOk}` };
+  },
+
+  // Out of memory, tested rather than assumed: the shared memory's maximum is
+  // capped (RESEARCH_MEMORY_CAP_MB) before loading, so the solve runs out of
+  // Wasm memory part-way. Records what happens and whether the runtime can
+  // still solve afterwards. pthreads build only (its memory is created in JS).
+  async "oom-threads-1"(h) { return oomTest(h, 1); },
+  async "oom-threads-4"(h) { return oomTest(h, 4); },
+
   // The legacy one-shot API with threads.
   async "legacy-solve"(h) {
     const out = [];
@@ -196,22 +289,54 @@ function callbackTest(h, names) {
       if (event.data?.mip_solution) lengths.add(event.data.mip_solution.length);
     };
   }
-  model.options.set({ output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(MEDIUM), threads: 4, parallel: "on", time_limit: 60 });
+  model.options.set({ output_flag: true, log_to_console: false, mip_rel_gap: 0, mip_abs_gap: gapOf(MEDIUM), ...threadOpts(h, 4), time_limit: 60 });
   const t0 = performance.now();
   const { modelStatus } = model.run(cbs);
   const ms = performance.now() - t0;
   const check = checkModel(model, MEDIUM);
+  const gapOk = gapReached(h, model, MEDIUM, statusName(h, modelStatus));
   const numCols = model.getSolution().colValue.length;
   model.dispose();
   const lengthsOk = [...lengths].every((n) => n === numCols);
-  const ok = check.ok && offMain === 0 && lengthsOk;
-  return { ok, details: `status ${statusName(h, modelStatus)} in ${(ms / 1000).toFixed(1)} s; calls ${JSON.stringify(counts)}; off-main-thread ${offMain}; solution vector lengths ${JSON.stringify([...lengths])} (model ${numCols}); valid ${check.ok}` };
+  const ok = check.ok && gapOk && offMain === 0 && lengthsOk;
+  return { ok, details: `status ${statusName(h, modelStatus)} in ${(ms / 1000).toFixed(1)} s; calls ${JSON.stringify(counts)}; off-main-thread ${offMain}; solution vector lengths ${JSON.stringify([...lengths])} (model ${numCols}); valid ${check.ok}; gap reached ${gapOk}` };
 }
 
 function gapReached(h, model, name, status) {
   const primal = model.info.get("objective_function_value");
   const dual = model.info.get("mip_dual_bound");
   return status === "optimal" && Math.abs(primal - dual) <= gapOf(name) + 1e-9 * Math.max(1, Math.abs(primal));
+}
+
+function threadOpts(h, n) {
+  return typeof h.researchPthreadStats === "function" ? { threads: n, parallel: n > 1 ? "on" : "off" } : {};
+}
+
+async function oomTest(h, n) {
+  const model = h.createModel({ format: "lp", data: lpOf(MEDIUM) });
+  model.options.set({ output_flag: false, mip_rel_gap: 0, mip_abs_gap: 0, ...threadOpts(h, n), time_limit: 120 });
+  let outcome;
+  try {
+    const status = statusName(h, model.run().modelStatus);
+    outcome = `run returned ${status}`;
+  } catch (e) {
+    outcome = `run threw ${typeof e === "string" ? `"${e}"` : `${e?.name}: ${String(e?.message ?? e).slice(0, 200)}`}`;
+  }
+  let disposed = "ok";
+  try {
+    model.dispose();
+  } catch (e) {
+    disposed = `threw ${String(e?.message ?? e).slice(0, 120)}`;
+  }
+  let after;
+  try {
+    const tiny = h.solve("Maximize\n obj: x + 2 y\nSubject To\n c1: x + y <= 4\nBounds\n 0 <= x <= 3\nGenerals\n x y\nEnd\n", threadOpts(h, n));
+    after = `${tiny.Status} ${tiny.ObjectiveValue}`;
+  } catch (e) {
+    after = `threw ${typeof e === "string" ? `"${e}"` : String(e?.message ?? e).slice(0, 160)}`;
+  }
+  // Informational: pass means the process survived and reported something.
+  return { ok: true, details: `cap ${process.env.RESEARCH_MEMORY_CAP_MB} MB, threads ${n}: ${outcome}; dispose ${disposed}; tiny solve afterwards: ${after}; stderr: ${stderrLines.slice(-4).join(" / ").slice(0, 400)}` };
 }
 
 function stats(h) {
@@ -274,6 +399,15 @@ async function verifyThreads(h, n, parallel) {
 }
 
 const stderrLines = [];
+if (args.test?.startsWith("oom")) {
+  const capPages = Math.floor((Number(process.env.RESEARCH_MEMORY_CAP_MB || 40) * 1048576) / 65536);
+  const Orig = WebAssembly.Memory;
+  WebAssembly.Memory = class CappedMemory extends Orig {
+    constructor(d) {
+      super(d.maximum !== undefined && d.maximum > capPages ? { ...d, maximum: Math.max(capPages, d.initial) } : d);
+    }
+  };
+}
 async function load() {
   const loadHighs = createRequire(import.meta.url)(modulePath);
   const t0 = performance.now();
@@ -316,6 +450,7 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     const t0 = performance.now();
     const child = spawnSync(process.execPath, ["--trace-uncaught", new URL(import.meta.url).pathname, "--module", modulePath, "--models", modelsDir, "--test", name], {
       encoding: "utf8",
+      env: { ...process.env, RESEARCH_MEMORY_CAP_MB: process.env.RESEARCH_MEMORY_CAP_MB || "40" },
       timeout: 300_000,
       killSignal: "SIGKILL",
     });
@@ -323,6 +458,7 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     let r;
     if (child.error?.code === "ETIMEDOUT") r = { ok: false, details: "HUNG: killed after 300 s" };
     else if (child.status !== 0) r = { ok: false, details: `process exit ${child.status} signal ${child.signal}: ${(child.stderr || "").slice(-2500)}` };
+    if (name.startsWith("oom")) r.informational = true;
     else r = JSON.parse(child.stdout.trim().split("\n").pop());
     tests.push({ name, ...r, ms });
     console.log(`${r.ok ? "PASS" : "FAIL"} ${name} (${(ms / 1000).toFixed(1)} s): ${r.details}`);

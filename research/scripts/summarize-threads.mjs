@@ -150,13 +150,14 @@ if (failed.length || notes.length) {
   out();
 }
 
-if (args.api && fs.existsSync(args.api)) {
-  const api = JSON.parse(fs.readFileSync(args.api, "utf8"));
-  out("## JavaScript interface and callback tests (pthreads build)");
+for (const [file, title] of [[args.api, "pthreads build"], [args["api-baseline"], "single-thread baseline build, same build-independent tests"]]) {
+  if (!file || !fs.existsSync(file)) continue;
+  const api = JSON.parse(fs.readFileSync(file, "utf8"));
+  out(`## JavaScript interface and callback tests (${title})`);
   out();
-  out("| test | result | details |");
-  out("|---|---|---|");
-  for (const t of api.tests) out(`| ${t.name} | ${t.ok ? "pass" : "**FAIL**"} | ${String(t.details ?? "").replace(/\|/g, "/").replace(/\n/g, " ")} |`);
+  out("| test | result | seconds | details |");
+  out("|---|---|---|---|");
+  for (const t of api.tests) out(`| ${t.name} | ${t.informational ? "recorded" : t.ok ? "pass" : "**FAIL**"} | ${(t.ms / 1000).toFixed(1)} | ${String(t.details ?? "").replace(/\|/g, "/").replace(/\n/g, " ").slice(0, 1500)} |`);
   out();
 }
 
