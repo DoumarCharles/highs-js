@@ -214,6 +214,9 @@ jobs:
             node research/scripts/summarize-threads.mjs --wasm results/wasm.jsonl --api results/api-test.json \
               --api-baseline results/api-test-baseline.json --api-dbg results/api-test-dbg.json \
               --build-info "$infos" | tee results/summary.md
+            if [ -s results/wasm.jsonl ]; then
+              node research/scripts/analyze-threads.mjs results/wasm.jsonl | tee results/analysis.md | tee -a results/summary.md
+            fi
           else
             node research/scripts/summarize.mjs --wasm results/wasm.jsonl --native results/native.jsonl \
               --build-info "$infos" | tee results/summary.md
