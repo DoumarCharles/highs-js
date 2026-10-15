@@ -376,7 +376,9 @@ threads⌉ = 4 search workers on 2 threads, and on `mkp_n200` that search
 wandered (≥ 128,000 nodes vs 3,600 at 4 threads).
 
 Effort: pt1 reproduces the baseline's exact search (identical nodes and LP
-iterations in every pair); its cost is 2 % (median 0.98×), the price of the
+iterations in every pair that finished; the censored seed-2 pair stopped at
+slightly different node counts because the time limit fell at a different
+moment); its cost is 2 % (median 0.98×), the price of the
 threaded build itself (atomics, shared memory, Wasm exception handling).
 Threaded runs change the search path, as expected, but are deterministic:
 pt4 took the same path in both repetitions of all 24 pairs (time spread
