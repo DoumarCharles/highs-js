@@ -1,0 +1,121 @@
+{
+  "module": "dist/wasm-pthreads/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "threads-1",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":1,\"hardwareThreads\":4,\"maxWorkers\":1,\"parallelSearch\":\"off\"} (expected 1 threads, 1 workers); pthreads running during solve 0 (expected 0); CPU/wall 1.10; optimal in 18.4 s; valid true",
+      "loadMs": 144.78224400000002,
+      "ms": 18631.313931999997
+    },
+    {
+      "name": "threads-2",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 937.3116450000016
+    },
+    {
+      "name": "threads-4",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 915.0719149999968
+    },
+    {
+      "name": "callbacks-all",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 927.8085159999973
+    },
+    {
+      "name": "interrupt",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 927.602856999998
+    },
+    {
+      "name": "repeated-solves",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 1149.5231749999984
+    },
+    {
+      "name": "rerun-and-thread-change",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 1168.4653569999973
+    },
+    {
+      "name": "two-models",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 1134.1191279999985
+    },
+    {
+      "name": "legacy-solve",
+      "ok": false,
+      "details": "HUNG: killed after 300 s",
+      "ms": 300108.090585
+    },
+    {
+      "name": "terminate-worker",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 5412.170662000019
+    },
+    {
+      "name": "callback-logging",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 920.967444000009
+    },
+    {
+      "name": "callback-simplexInterrupt",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 907.1009210000047
+    },
+    {
+      "name": "callback-ipmInterrupt",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 910.844207999995
+    },
+    {
+      "name": "callback-mipSolution",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 906.0700339999748
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 917.6189139999915
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 908.5076610000106
+    },
+    {
+      "name": "callback-mipInterrupt",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 910.1942669999553
+    },
+    {
+      "name": "callback-mipCutPool",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 904.000074999989
+    },
+    {
+      "name": "callback-mipUserSolution",
+      "ok": false,
+      "details": "process exit 1 signal null: \nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\nunwind\nThrown at:\n    at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:107:5)\n\n\nNode.js v24.21.0\n",
+      "ms": 917.8975749999518
+    }
+  ]
+}

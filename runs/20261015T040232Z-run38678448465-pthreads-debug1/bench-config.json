@@ -1,0 +1,14 @@
+{
+  "label": "pthreads-debug1",
+  "candidate": "pthreads",
+  "builds": ["baseline", "pthreads"],
+  "wasmVariants": "pt2=pthreads@2@on",
+  "apiTest": true,
+  "summarizer": "threads",
+  "seeds": "0",
+  "reps": 1,
+  "tiers": "medium",
+  "timeLimit": 300,
+  "nativeConfigs": "none",
+  "nativeReps": 1
+}
