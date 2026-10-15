@@ -66,6 +66,10 @@ jobs:
           step check-api npm run check:api
           step build npm run build
           step test npm test
+          # Diagnostics only: npm test stops at the first failing stage, so also
+          # run the legacy and extended suites independently to see every failure.
+          step test-legacy node tests/test.js
+          step test-extended node --test tests/extended/*.test.cjs
           step test-package npm run test:package
           step smoke node research/smoke.mjs build --expect-hash "$(git -C HiGHS rev-parse --short=7 HEAD)"
           # Published production reference, loaded side by side from its own directory.
@@ -96,6 +100,12 @@ jobs:
       - name: Report test
         if: always()
         run: node research/ci-report.mjs test research-logs/test.log research-logs/test.code
+      - name: Report legacy suite (diagnostic)
+        if: always()
+        run: node research/ci-report.mjs test-legacy research-logs/test-legacy.log research-logs/test-legacy.code
+      - name: Report extended suite (diagnostic)
+        if: always()
+        run: node research/ci-report.mjs test-extended research-logs/test-extended.log research-logs/test-extended.code
       - name: Report test:package
         if: always()
         run: node research/ci-report.mjs test:package research-logs/test-package.log research-logs/test-package.code

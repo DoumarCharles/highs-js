@@ -21,9 +21,13 @@ function annotate(level, title, message) {
 }
 
 const code = existsSync(codePath) ? readFileSync(codePath, "utf8").trim() : "missing";
-const log = existsSync(logPath)
-  ? readFileSync(logPath, "utf8").replace(/\x1b\[[0-9;]*m/g, "")
-  : "";
+// Node prints the whole (minified, single-line) Emscripten loader as the
+// source line of an uncaught error; shorten such lines so the message fits.
+const log = (existsSync(logPath) ? readFileSync(logPath, "utf8") : "")
+  .replace(/\x1b\[[0-9;]*m/g, "")
+  .split("\n")
+  .map((line) => (line.length > 400 ? `${line.slice(0, 160)} …[${line.length} chars truncated]` : line))
+  .join("\n");
 const lines = log.split("\n");
 
 // Node's test runner prints a "failing tests:" section with full details.

@@ -110,25 +110,35 @@ function exercise(label, highs) {
   return highs.version;
 }
 
-const cjsLoader = require(join(dir, "highs.js"));
-const cjs = await cjsLoader(quiet);
-const version = exercise("cjs", cjs);
+function errorDetail(error) {
+  return { message: String(error?.message ?? error), stack: String(error?.stack ?? "").split("\n").slice(0, 6).join("\n") };
+}
+async function phase(label, load) {
+  try {
+    const highs = await load();
+    return exercise(label, highs);
+  } catch (error) {
+    check(`${label} completed without throwing`, false, errorDetail(error));
+    return null;
+  }
+}
 
-const esmLoader = (await import(pathToFileURL(join(dir, "highs.mjs")).href)).default;
-const esm = await esmLoader(quiet);
-const esmVersion = exercise("esm", esm);
-check("cjs/esm report the same version", JSON.stringify(version) === JSON.stringify(esmVersion));
+const version = await phase("cjs", () => require(join(dir, "highs.js"))(quiet));
+const esmVersion = await phase("esm", async () =>
+  (await import(pathToFileURL(join(dir, "highs.mjs")).href)).default(quiet),
+);
+check("cjs/esm report the same version", version && JSON.stringify(version) === JSON.stringify(esmVersion));
 
 if (expectHash) {
-  check(`gitHash identifies ${expectHash}`, String(version.gitHash).includes(expectHash), {
-    gitHash: version.gitHash,
+  check(`gitHash identifies ${expectHash}`, String(version?.gitHash).includes(expectHash), {
+    gitHash: version?.gitHash,
   });
 }
 
 const result = {
   build: dir,
   node: process.version,
-  version: { ...version },
+  version: version ? { ...version } : null,
   ok: checks.every((entry) => entry.ok),
   checks,
 };
