@@ -50,7 +50,7 @@ for (const m of manifest) {
       const order = [...variants.slice(shift), ...variants.slice(0, shift)];
       pairIndex += 1;
       order.forEach((v, position) => {
-        const childArgs = [runOne, "--module", v.module, "--lp", path.join(modelsDir, `${m.name}.lp`), "--json", path.join(modelsDir, `${m.name}.json`),
+        const childArgs = ["--trace-uncaught", runOne, "--module", v.module, "--lp", path.join(modelsDir, `${m.name}.lp`), "--json", path.join(modelsDir, `${m.name}.json`),
           "--gap", String(m.gap), "--seed", String(seed), "--time-limit", String(timeLimit), "--callbacks", callbacks];
         if (v.threads) childArgs.push("--threads", v.threads);
         if (v.parallel) childArgs.push("--parallel", v.parallel);

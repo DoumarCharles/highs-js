@@ -287,6 +287,9 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     result = await TESTS[args.test](h);
     result.loadMs = loadMs;
   } catch (e) {
+    // Thrown strings (Emscripten control flow such as 'unwind') carry no
+    // stack: rethrow so the parent's --trace-uncaught shows where.
+    if (typeof e === "string") throw e;
     result = { ok: false, details: `exception: ${typeof e === "string" ? `thrown string "${e}"` : String(e?.stack ?? e).slice(0, 600)}; stderr: ${stderrLines.slice(-8).join(" / ").slice(0, 800)}` };
   }
   fs.writeSync(1, JSON.stringify(result) + "\n");
@@ -295,7 +298,7 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
   const tests = [];
   for (const name of Object.keys(TESTS)) {
     const t0 = performance.now();
-    const child = spawnSync(process.execPath, [new URL(import.meta.url).pathname, "--module", modulePath, "--models", modelsDir, "--test", name], {
+    const child = spawnSync(process.execPath, ["--trace-uncaught", new URL(import.meta.url).pathname, "--module", modulePath, "--models", modelsDir, "--test", name], {
       encoding: "utf8",
       timeout: 300_000,
       killSignal: "SIGKILL",
@@ -303,7 +306,7 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     const ms = performance.now() - t0;
     let r;
     if (child.error?.code === "ETIMEDOUT") r = { ok: false, details: "HUNG: killed after 300 s" };
-    else if (child.status !== 0) r = { ok: false, details: `process exit ${child.status} signal ${child.signal}: ${(child.stderr || "").slice(-800)}` };
+    else if (child.status !== 0) r = { ok: false, details: `process exit ${child.status} signal ${child.signal}: ${(child.stderr || "").slice(-2500)}` };
     else r = JSON.parse(child.stdout.trim().split("\n").pop());
     tests.push({ name, ...r, ms });
     console.log(`${r.ok ? "PASS" : "FAIL"} ${name} (${(ms / 1000).toFixed(1)} s): ${r.details}`);

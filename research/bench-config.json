@@ -1,8 +1,8 @@
 {
-  "label": "pthreads-smoke",
+  "label": "pthreads-debug1",
   "candidate": "pthreads",
   "builds": ["baseline", "pthreads"],
-  "wasmVariants": "baseline=baseline,pt1=pthreads@1,pt2=pthreads@2@on,pt4=pthreads@4@on",
+  "wasmVariants": "pt2=pthreads@2@on",
   "apiTest": true,
   "summarizer": "threads",
   "seeds": "0",
