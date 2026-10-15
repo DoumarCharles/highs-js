@@ -70,7 +70,14 @@ jobs:
           package-manager-cache: false
       - run: npm ci
       - name: Build ${{ matrix.variant }}
-        run: bash research/build-variant.sh "${{ matrix.variant }}" "dist/${{ matrix.variant }}"
+        # On failure the first error lines become annotations, readable
+        # through the checks API without downloading logs.
+        run: |
+          set -o pipefail
+          bash research/build-variant.sh "${{ matrix.variant }}" "dist/${{ matrix.variant }}" 2>&1 | tee build-variant.log || {
+            grep -E "error[: ]|Error " build-variant.log | grep -v "^--" | head -n 8 | while IFS= read -r line; do echo "::error::${line:0:900}"; done
+            exit 1
+          }
       - name: Smoke test
         run: node research/scripts/smoke.cjs "dist/${{ matrix.variant }}/highs.js"
       - uses: actions/upload-artifact@v4

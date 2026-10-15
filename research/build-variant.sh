@@ -56,7 +56,8 @@ emcmake cmake --fresh "$root/HiGHS" \
   "${EXTRA_CMAKE_ARGS[@]}" 2>&1 | tee cmake-configure.log
 
 start=$(date +%s)
-emmake make -j"$(nproc)" libhighs 2>&1 | tail -n 5
+emmake make -j"$(nproc)" libhighs > make.log 2>&1 || { grep -E "error|Error" make.log | head -n 40; tail -n 40 make.log; exit 1; }
+tail -n 3 make.log
 compile_s=$(( $(date +%s) - start ))
 
 start=$(date +%s)

@@ -107,7 +107,32 @@ spent raising the lower bound.
 
 ## 4. Results
 
-(Filled in from workflow runs below.)
+Raw results for every run (JSONL per solve, build info, Markdown summary) are
+on the `perf-research-results` branch under `runs/<timestamp>-run<id>-<variant>/`.
+Runner: GitHub-hosted `ubuntu-latest`, 4 vCPU.
+
+### Experiment 1 — true LTO: **rejected**
+
+Run 38654784298 (commit f85dfb8), 7 models × seeds 0, 1 × 2 repetitions, ABBA order.
+
+- **LTO really applied:** baseline `HighsMipSolver.cpp.o` magic `\0asm` (Wasm
+  object), LTO variant `BC 0xC0 0xDE` (LLVM bitcode); cached
+  `CMAKE_CXX_FLAGS=-flto`; HiGHS's own IPO stays off in both.
+- **Search paths identical** in all 14 model-seed pairs (same nodes, LP
+  iterations, root bound, objective, final gap).
+- **Time:** geometric mean **+0.9 % slower** (hard tier +1.1 %); per-pair range
+  −0.3 % … +2.1 %, consistent across repetitions. Total solve time 367.7 s →
+  372.0 s.
+- Binary 3,531,385 → 3,407,208 bytes (−3.5 %), gzip 1,213,959 → 1,182,603
+  (−2.6 %). Compile 99 → 127 s, link 40 → 74 s. Wasm memory unchanged.
+- All solutions valid; every run stopped at its production gap.
+
+Interpretation: cross-file inlining is not where HiGHS spends its time in Wasm;
+the hot loops are already within single translation units. Not pursued further.
+
+Native runs in this job did not execute (exit 127: the native binary was linked
+against `libhighs.so`, which was not in the artifact). Fixed by linking
+statically from run 2 on; no native numbers are taken from run 1.
 
 ## 5. Reproducing
 
