@@ -97,7 +97,9 @@ and differently on different hardware).
 | gapd_a8_j48_s2 | Generalized assignment, type D | 384 × 56 | 10 | hard |
 | gapd_a10_j50_s3 | Generalized assignment, type D | 500 × 60 | 20 | hard |
 | mkp_n150_m10_s1 | Multidimensional knapsack | 150 × 10 | 360 | hard |
-| mkp_n250_m10_s1 | Multidimensional knapsack | 250 × 10 | 320 | hard |
+| mkp_n250_m10_s1 | Multidimensional knapsack | 250 × 10 | 320 | run 1 only (too easy) |
+| gapd_a10_j60_s1 | Generalized assignment, type D | 600 × 70 | 18 | hard (from run 2) |
+| mkp_n200_m10_s2 | Multidimensional knapsack | 200 × 10 | 180 | hard (from run 2) |
 | lotsize_i8_t15_s3 | Capacitated lot sizing, setup times | 375 × 255 | 10 | medium |
 | lotsize_i6_t20_s2 | Capacitated lot sizing, setup times | 380 × 260 | 10 | medium |
 | gapd_a5_j50_s4 | Generalized assignment, type D | 250 × 55 | 5 | medium |
@@ -202,6 +204,60 @@ gains, roughly 2–3× at 4 threads on these models. It is stable and
 deterministic natively. It costs about 2× memory at 4 threads. Its value
 depends on users having ≥4 cores. 2 threads is not worth it.
 
+### Experiment 3 — 256 MB initial heap: **rejected**
+
+Run 38668387090 (commit b6ead08), `-sINITIAL_MEMORY=256MB` (default 16 MB),
+everything else identical to the non-LTO baseline. 8 models × 2 seeds × 2
+repetitions, ABBA.
+
+- Every synthetic solve fit in the initial heap (baseline peak 20–126 MB), so
+  the candidate did **no** `memory.grow` during any solve: the most favourable
+  case for this experiment.
+- **Search paths identical** in all 16 pairs.
+- **Time:** geometric mean **−0.2 %**; per-pair −1.0 % … +0.5 %.
+- **Startup memory:** Wasm memory after load 20 MB → 256 MB; Node process RSS
+  after load 70 → 75 MB (pages are committed lazily on 64-bit V8, so the
+  256 MB is mostly reserved address space, not resident). On memory-constrained
+  devices (mobile browsers, 32-bit hosts) a 256 MB up-front allocation can fail
+  where growth would not. Binary size unchanged.
+
+Interpretation: memory growth costs nothing measurable in V8; HiGHS's
+allocation pattern is not the bottleneck.
+
+## 4b. Summary of experiments
+
+| # | Variant | What changed | Time vs baseline (geo-mean) | Paths | Size | Verdict |
+|---|---|---|---|---|---|---|
+| 1 | `lto` | HiGHS compiled to bitcode, real LTO | +0.9 % (slower) | identical | −3.5 % wasm | rejected |
+| 2 | `simd` | `-msimd128` (except HighsSearch.cpp: clang crash) | −0.7 % | identical | +1.5 % | rejected |
+| 3 | `initmem256` | 256 MB initial heap | −0.2 % | identical | 0 | rejected |
+| — | native threads | `parallel=on`, 4 threads (native) | 2.15–3.36× faster (9/10 hard) | different | — | only material lever |
+| — | native threads | `parallel=on`, 2 threads (native) | 1.48× geo-mean, 0.43–4.2× | different | — | inconsistent |
+
+Code-generation ceiling: native single-thread does 1.25× the LP iterations per
+second of Wasm. Build-flag work can at most close that ~20 % gap.
+
+## 4c. Recommended next step (not started; needs approval)
+
+Wasm pthreads with `parallel=on` and 4 threads, as a separate experimental
+build. Scope of a first feasibility test, synthetic models only:
+
+1. Build variant `pthreads`: `-pthread`, `-sPTHREAD_POOL_SIZE=4`,
+   fixed `-sMAXIMUM_MEMORY` (growth with shared memory works but is slower in JS
+   glue), HiGHS configured without `HIGHS_NO_DEFAULT_THREADS`.
+2. Run in Node first (worker_threads supply pthreads): measure the same
+   models at 1 and 4 threads, plus crash/hang checks, memory.
+3. Only if it holds the native 2–3× gain: browser test behind cross-origin
+   isolation (COOP/COEP via a service-worker shim on GitHub Pages), nested
+   workers from the app's solver worker, and proxying HiGHS callbacks to the
+   thread that registered them.
+
+A cheaper, separate idea the data supports: because search-path variance is
+large, racing independent single-thread solves (different seeds) in separate
+ordinary Web Workers needs no SharedArrayBuffer at all. On these synthetic
+models a 2-seed race gave only 1.09× (geometric mean), less than the 2–3× from
+parallel search, so it is a fallback rather than the main path.
+
 ## 5. Reproducing
 
 ```sh
@@ -209,7 +265,7 @@ git checkout perf-research && git submodule update --init
 npm ci
 # Emscripten 6.0.3 active (emsdk), then:
 bash research/build-variant.sh baseline dist/baseline
-bash research/build-variant.sh lto dist/lto
+bash research/build-variant.sh lto dist/lto        # or simd, initmem256
 node research/models/generate.mjs models
 node research/scripts/bench.mjs --variants baseline=dist/baseline/highs.js,lto=dist/lto/highs.js \
   --models models --seeds 0,1 --reps 2 --time-limit 300 --out results/wasm.jsonl
