@@ -1,0 +1,24 @@
+variant: baseline
+extra cmake args: (none)
+extra link flags: (none)
+JS glue guarded to main runtime thread: 0
+emcc: emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.3 (283e2d130132859fde6a4e4c87fd254b38127651)
+HiGHS commit: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+-- Build type: Release
+-- IPO / LTO supported by compiler: YES
+-- IPO / LTO: disabled by default when building a static library; set CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON to enable
+CMAKE_CXX_FLAGS (cache): 
+CMAKE_CXX_FLAGS_RELEASE (cache): -O3 -DNDEBUG
+HighsMipSolver.cpp.o magic:  \0 a s m
+HighsMipSolver.cpp.o wasm info: {"memories":[{"import":"env.__linear_memory","shared":false,"minPages":1,"maxPages":null,"minMB":0.0625}],"features":["+bulk-memory","+bulk-memory-opt","+call-indirect-overlong","+multivalue","+mutable-globals","+nontrapping-fptoint","+reference-types","+sign-ext","-shared-mem"],"threadImports":["env._ZTHN17HighsTaskExecutor25threadLocalWorkerDequePtrE","env._ZN17HighsLpRelaxation22notifyCutPoolsLpCopiedEi","env._ZNSt3__218condition_variable10notify_oneEv","env._ZNSt3__218condition_variable4waitERNS_11unique_lockINS_5mutexEEE","GOT.func._ZTHN17HighsTaskExecutor25threadLocalWorkerDequePtrE","GOT.mem._ZN17HighsTaskExecutor25threadLocalWorkerDequePtrE"]}
+highs.wasm info: {"memories":[{"defined":true,"shared":false,"minPages":324,"maxPages":32768,"minMB":20.25,"maxMB":2048}],"features":[],"threadImports":[]}
+HConfig.h threading: #define HIGHS_NO_DEFAULT_THREADS
+cmake: -- Found Threads: TRUE
+objects in libhighs.a: 216
+compile seconds: 130
+link seconds: 50
+highs.wasm bytes: 3531385
+highs.wasm gzip-9 bytes: 1213959
+highs.wasm sha256: 528be4365bea1d4188988646b244263f50320df55782e14d6af5bce7cd45c840
+GROWABLE_HEAP view checks in highs.js (pthreads + memory growth): 0
+PTHREAD_POOL_SIZE in highs.js: 

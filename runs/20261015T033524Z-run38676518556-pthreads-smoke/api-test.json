@@ -1,0 +1,120 @@
+{
+  "module": "dist/wasm-pthreads/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "threads-1",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at verifyThreads (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:240:17)\n    at threads-1 (file:///home/runner/work/highs-j",
+      "ms": 262.919236
+    },
+    {
+      "name": "threads-2",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at verifyThreads (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:240:17)\n    at threads-2 (file:///home/runner/work/highs-j",
+      "ms": 242.64182899999997
+    },
+    {
+      "name": "threads-4",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at verifyThreads (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:240:17)\n    at threads-4 (file:///home/runner/work/highs-j",
+      "ms": 235.94455100000005
+    },
+    {
+      "name": "callbacks-all",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at callbacks-all (file:///home/runner/work/high",
+      "ms": 244.8124969999999
+    },
+    {
+      "name": "interrupt",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at Object.interrupt (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:48:19)\n    at file:///home/runner/work/highs-js/highs-j",
+      "ms": 233.204344
+    },
+    {
+      "name": "repeated-solves",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at solveOnce (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:225:17)\n    at repeated-solves (file:///home/runner/work/highs",
+      "ms": 233.53267200000005
+    },
+    {
+      "name": "rerun-and-thread-change",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at rerun-and-thread-change (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:88:19)\n    at file:///home/runner/work/highs-js/",
+      "ms": 228.0745969999998
+    },
+    {
+      "name": "two-models",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at two-models (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:113:15)\n    at file:///home/runner/work/highs-js/highs-js/res",
+      "ms": 232.88417099999992
+    },
+    {
+      "name": "legacy-solve",
+      "ok": false,
+      "details": "exception: unwind",
+      "ms": 1156.756681
+    },
+    {
+      "name": "terminate-worker",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:277:17",
+      "ms": 4966.687097999999
+    },
+    {
+      "name": "callback-logging",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-logging] (file",
+      "ms": 250.21491799999967
+    },
+    {
+      "name": "callback-simplexInterrupt",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-simplexInterru",
+      "ms": 228.94548000000032
+    },
+    {
+      "name": "callback-ipmInterrupt",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-ipmInterrupt] ",
+      "ms": 239.2861129999983
+    },
+    {
+      "name": "callback-mipSolution",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipSolution] (",
+      "ms": 241.6696979999997
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipImprovingSo",
+      "ms": 238.89994000000115
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipLogging] (f",
+      "ms": 236.62945899999977
+    },
+    {
+      "name": "callback-mipInterrupt",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipInterrupt] ",
+      "ms": 234.5483720000011
+    },
+    {
+      "name": "callback-mipCutPool",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipCutPool] (f",
+      "ms": 234.55732700000044
+    },
+    {
+      "name": "callback-mipUserSolution",
+      "ok": false,
+      "details": "exception: HighsUnsupportedOptionError: Option 'threads' is not supported by the single-threaded data-only API\n    at unsupportedOptionError (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:108570)\n    at validateOption (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:117340)\n    at Array.forEach (<anonymous>)\n    at OptionStoreImpl.set (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads/highs.js:1:175501)\n    at callbackTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:199:17)\n    at TESTS.<computed> [as callback-mipUserSolutio",
+      "ms": 230.25092700000096
+    }
+  ]
+}
