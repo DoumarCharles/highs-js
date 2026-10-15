@@ -3,8 +3,11 @@
 // memory, JIT state and heap growth never carry over between runs.
 //
 // node research/scripts/run-one.mjs --module build/highs.js --lp m.lp --json m.json \
-//      --gap 10 --seed 0 --time-limit 300 [--callbacks production|none]
+//      --gap 10 --seed 0 --time-limit 300 [--callbacks production|none] \
+//      [--threads N] [--parallel on|off|choose]
 //
+// --threads / --parallel are only set when given, so the single-thread
+// baseline runs with exactly the options it always had.
 // Options mirror a production-style solve: persistent API (createModel + run),
 // absolute gap with mip_rel_gap 0, output_flag on (needed for the mipLogging
 // callback) but nothing printed, and the same callbacks an app would register.
@@ -22,12 +25,23 @@ const gap = Number(args.gap);
 const seed = Number(args.seed ?? 0);
 const timeLimit = Number(args["time-limit"] ?? 300);
 const callbacksMode = args.callbacks ?? "production";
+const threads = args.threads === undefined ? null : Number(args.threads);
+const parallel = args.parallel ?? null;
 
 // Capture the Wasm memory so its final size (= peak, Wasm memory never
 // shrinks) can be reported.
 let wasmMemory = null;
+const OrigMemory = WebAssembly.Memory;
 const captureMemory = (instance) => {
-  for (const value of Object.values(instance.exports)) if (value instanceof WebAssembly.Memory) wasmMemory = value;
+  for (const value of Object.values(instance.exports)) if (value instanceof OrigMemory) wasmMemory = value;
+};
+// With pthreads the memory is created in JS (shared) and imported, not
+// exported, so also capture memories constructed on this thread.
+WebAssembly.Memory = class TrackedMemory extends OrigMemory {
+  constructor(descriptor) {
+    super(descriptor);
+    wasmMemory = this;
+  }
 };
 const origInstantiate = WebAssembly.instantiate;
 WebAssembly.instantiate = async function (...a) {
@@ -51,6 +65,13 @@ const loadMs = performance.now() - loadStart;
 // Startup memory: process RSS and Wasm memory size right after instantiation.
 const rssAfterLoadKb = Math.round(process.memoryUsage().rss / 1024);
 const wasmBytesAfterLoad = wasmMemory ? wasmMemory.buffer.byteLength : null;
+const pthreadStats = () => (typeof highs.researchPthreadStats === "function" ? highs.researchPthreadStats() : null);
+const pthreadsAfterLoad = pthreadStats();
+let maxRunningPthreads = 0;
+const samplePthreads = () => {
+  const st = pthreadStats();
+  if (st && st.running > maxRunningPthreads) maxRunningPthreads = st.running;
+};
 
 const lp = fs.readFileSync(args.lp, "utf8");
 const model = highs.createModel({ format: "lp", data: lp });
@@ -67,6 +88,7 @@ if (callbacksMode === "production") {
   callbacks[callbackType.mipImprovingSolution] = ({ data }) => {
     // An app copies the solution vector out on every improvement.
     if (data.mip_solution) improving += data.mip_solution.length > 0 ? 1 : 0;
+    samplePthreads();
     if (firstPrimal === null) {
       firstPrimal = data.objective_function_value;
       firstPrimalMs = performance.now() - t0;
@@ -74,6 +96,7 @@ if (callbacksMode === "production") {
   };
   callbacks[callbackType.mipLogging] = ({ data }) => {
     logLines += 1;
+    samplePthreads();
     if (Number(data.mip_node_count) === 0) rootDual = data.mip_dual_bound;
     lastLog = {
       primal: data.mip_primal_bound,
@@ -90,11 +113,20 @@ model.options.set({
   mip_abs_gap: gap,
   random_seed: seed,
   time_limit: timeLimit,
+  ...(threads === null ? {} : { threads }),
+  ...(parallel === null ? {} : { parallel }),
 });
 
+const cpu0 = process.cpuUsage();
 t0 = performance.now();
 const { modelStatus } = model.run(callbacks);
 const solveMs = performance.now() - t0;
+const cpu = process.cpuUsage(cpu0);
+// Process CPU time covers every thread (main + pthread workers), so
+// cpu/wall > 1 is direct evidence that more than one thread was busy.
+const cpuMs = (cpu.user + cpu.system) / 1000;
+samplePthreads();
+const pthreadsAfterRun = pthreadStats();
 
 const info = (key) => model.info.get(key);
 const statusName = Object.entries(highs.constants.modelStatus).find(([, v]) => v === modelStatus)?.[0] ?? String(modelStatus);
@@ -106,7 +138,11 @@ const out = {
   seed,
   gapTarget: gap,
   status: statusName,
+  threads,
+  parallel,
   solveMs,
+  cpuMs,
+  cpuWallRatio: cpuMs / solveMs,
   loadMs,
   nodes: Number(info("mip_node_count")),
   lpIterations: Number(info("simplex_iteration_count")),
@@ -125,6 +161,10 @@ const out = {
   wasmMemoryBytes: wasmMemory ? wasmMemory.buffer.byteLength : null,
   wasmBytesAfterLoad,
   rssAfterLoadKb,
+  sharedMemory: wasmMemory ? wasmMemory.buffer instanceof SharedArrayBuffer : null,
+  pthreadsAfterLoad,
+  pthreadsAfterRun,
+  maxRunningPthreads,
   maxRssKb: process.resourceUsage().maxRSS,
 };
 
@@ -141,5 +181,10 @@ if (info("primal_solution_status") === highs.constants.solutionStatus.feasible) 
   out.valid = false;
   out.checkProblems = ["no feasible solution"];
 }
-model.dispose();
-process.stdout.write(JSON.stringify(out) + "\n");
+const d0 = performance.now();
+model.dispose(); // Highs_destroy also joins the pthread pool's HiGHS threads
+out.disposeMs = performance.now() - d0;
+out.pthreadsAfterDispose = pthreadStats();
+// Write synchronously and exit: idle pool workers must not keep Node alive.
+fs.writeSync(1, JSON.stringify(out) + "\n");
+process.exit(0);

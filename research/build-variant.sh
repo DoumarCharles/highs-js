@@ -18,6 +18,8 @@ root="$(dirname "$(dirname "$(realpath "$0")")")"
 # unproven changes in one variant.
 EXTRA_CMAKE_ARGS=()
 EXTRA_LINK_FLAGS=()
+EXTRA_POST_JS=()
+NO_DEFAULT_THREADS=ON
 case "$variant" in
   baseline) ;;
   # Real cross-module LTO: compile HiGHS itself to LLVM bitcode so the
@@ -38,6 +40,22 @@ case "$variant" in
   # mimalloc instead of dlmalloc.
   mimalloc)
     EXTRA_LINK_FLAGS=(-sMALLOC=mimalloc) ;;
+  # WebAssembly pthreads for HiGHS's parallel MIP search. Every HiGHS object
+  # and the bridge are compiled with -pthread (atomics + bulk memory); wasm-ld
+  # refuses to link shared memory if any object lacks them. HiGHS's
+  # executor creates (threads - 1) pthreads, so threads=4 needs 3; the pool is
+  # pre-spawned with 4 (one spare) and verified at run time through
+  # research/pthreads-probe.js. HIGHS_NO_DEFAULT_THREADS is turned off so
+  # nothing in the configuration caps threading; runs always set `threads`
+  # explicitly. Thread stacks default to STACK_SIZE (4 MB), set explicitly.
+  # Memory: same growth settings and 2 GB maximum as the baseline (a shared
+  # memory must declare its maximum; 2 GB is Emscripten's default).
+  pthreads)
+    NO_DEFAULT_THREADS=OFF
+    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-pthread -DCMAKE_CXX_FLAGS=-pthread)
+    EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
+      -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648)
+    EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
   *) echo "unknown variant: $variant" >&2; exit 2 ;;
 esac
 
@@ -53,7 +71,7 @@ emcmake cmake --fresh "$root/HiGHS" \
   -DFAST_BUILD=OFF \
   -DBUILD_SHARED_LIBS=OFF \
   -DHIGHSINT64=OFF \
-  -DHIGHS_NO_DEFAULT_THREADS=ON \
+  -DHIGHS_NO_DEFAULT_THREADS="$NO_DEFAULT_THREADS" \
   "${EXTRA_CMAKE_ARGS[@]}" 2>&1 | tee cmake-configure.log
 
 start=$(date +%s)
@@ -76,6 +94,7 @@ emcc -O3 \
   --pre-js "$root/src/pre.js" \
   --post-js "$root/src/post.js" \
   --post-js "$root/build/generated/extended.js" \
+  "${EXTRA_POST_JS[@]}" \
   "$root/src/highs_js_bridge.cpp" \
   lib/*.a -o "$out/highs.js"
 link_s=$(( $(date +%s) - start ))
@@ -86,7 +105,16 @@ probe="$(mktemp -d)"
 ( cd "$probe" && "$(dirname "$(command -v emcc)")/../bin/llvm-ar" x "$bdir/lib/libhighs.a" HighsMipSolver.cpp.o 2>/dev/null \
   || emar x "$bdir/lib/libhighs.a" HighsMipSolver.cpp.o )
 magic="$(head -c 4 "$probe/HighsMipSolver.cpp.o" | od -An -c | tr -s ' ')"
+# Object-level threading evidence (only meaningful for plain Wasm objects):
+# target features (+atomics, +bulk-memory) and whether the object expects a
+# shared linear memory.
+if [ "$(head -c 4 "$probe/HighsMipSolver.cpp.o" | od -An -tx1 | tr -d ' ')" = "0061736d" ]; then
+  objinfo="$(node "$root/research/scripts/wasm-info.mjs" "$probe/HighsMipSolver.cpp.o")"
+else
+  objinfo="(bitcode object; not parsed)"
+fi
 rm -rf "$probe"
+wasminfo="$(node "$root/research/scripts/wasm-info.mjs" "$out/highs.wasm")"
 
 {
   echo "variant: $variant"
@@ -98,9 +126,16 @@ rm -rf "$probe"
   echo "CMAKE_CXX_FLAGS (cache): $(grep -E '^CMAKE_CXX_FLAGS:' CMakeCache.txt | cut -d= -f2-)"
   echo "CMAKE_CXX_FLAGS_RELEASE (cache): $(grep -E '^CMAKE_CXX_FLAGS_RELEASE:' CMakeCache.txt | cut -d= -f2-)"
   echo "HighsMipSolver.cpp.o magic: $magic"
+  echo "HighsMipSolver.cpp.o wasm info: $objinfo"
+  echo "highs.wasm info: $wasminfo"
+  echo "HConfig.h threading: $(grep -E 'HIGHS_NO_DEFAULT_THREADS' "$bdir/HConfig.h" || echo '(HIGHS_NO_DEFAULT_THREADS not defined)')"
+  grep -E "Threads|pthread" cmake-configure.log | sed 's/^/cmake: /' || true
+  echo "objects in libhighs.a: $("$(dirname "$(command -v emcc)")/../bin/llvm-ar" t "$bdir/lib/libhighs.a" 2>/dev/null | wc -l)"
   echo "compile seconds: $compile_s"
   echo "link seconds: $link_s"
   echo "highs.wasm bytes: $(stat -c %s "$out/highs.wasm")"
   echo "highs.wasm gzip-9 bytes: $(gzip -9 -c "$out/highs.wasm" | wc -c)"
   echo "highs.wasm sha256: $(sha256sum "$out/highs.wasm" | cut -d' ' -f1)"
+  echo "GROWABLE_HEAP view checks in highs.js (pthreads + memory growth): $(grep -o "GROWABLE_HEAP_" "$out/highs.js" | wc -l)"
+  echo "PTHREAD_POOL_SIZE in highs.js: $(grep -oE "pthreadPoolSize = [0-9]+|PTHREAD_POOL_SIZE[^;]{0,40}" "$out/highs.js" | head -n 2 | tr "\n" " ")"
 } | tee "$out/build-info.txt"

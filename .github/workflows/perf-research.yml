@@ -33,6 +33,10 @@ jobs:
       time_limit: ${{ steps.c.outputs.time_limit }}
       native_configs: ${{ steps.c.outputs.native_configs }}
       native_reps: ${{ steps.c.outputs.native_reps }}
+      wasm_variants: ${{ steps.c.outputs.wasm_variants }}
+      api_test: ${{ steps.c.outputs.api_test }}
+      summarizer: ${{ steps.c.outputs.summarizer }}
+      label: ${{ steps.c.outputs.label }}
     steps:
       - uses: actions/checkout@v6
       - id: c
@@ -43,7 +47,13 @@ jobs:
           cfg=research/bench-config.json
           cand=$(jq -r .candidate $cfg)
           echo "candidate=$cand" >> "$GITHUB_OUTPUT"
-          echo "variants=[\"baseline\",\"$cand\"]" >> "$GITHUB_OUTPUT"
+          # Builds to make (default: baseline + candidate).
+          echo "variants=$(jq -c --arg c "$cand" '.builds // ["baseline", $c]' $cfg)" >> "$GITHUB_OUTPUT"
+          # Timed variants: name=build[@threads[@parallel]] (default: baseline vs candidate).
+          echo "wasm_variants=$(jq -r --arg c "$cand" '.wasmVariants // "baseline=baseline,\($c)=\($c)"' $cfg)" >> "$GITHUB_OUTPUT"
+          echo "api_test=$(jq -r '.apiTest // false' $cfg)" >> "$GITHUB_OUTPUT"
+          echo "summarizer=$(jq -r '.summarizer // "ab"' $cfg)" >> "$GITHUB_OUTPUT"
+          echo "label=$(jq -r --arg c "$cand" '.label // $c' $cfg)" >> "$GITHUB_OUTPUT"
           echo "seeds=$(jq -r .seeds $cfg)" >> "$GITHUB_OUTPUT"
           echo "reps=$(jq -r .reps $cfg)" >> "$GITHUB_OUTPUT"
           echo "tiers=$(jq -r .tiers $cfg)" >> "$GITHUB_OUTPUT"
@@ -129,10 +139,23 @@ jobs:
           nproc; lscpu | grep -E "Model name|^CPU\(s\)|Thread|MHz" || true; free -m; node --version
       - name: Generate synthetic models
         run: node research/models/generate.mjs models
-      - name: WebAssembly A/B (sequential, alternating order)
+      - name: WebAssembly interface and callback tests
+        if: needs.config.outputs.api_test == 'true'
         run: |
-          node research/scripts/bench.mjs \
-            --variants "baseline=dist/wasm-baseline/highs.js,${{ needs.config.outputs.candidate }}=dist/wasm-${{ needs.config.outputs.candidate }}/highs.js" \
+          node research/scripts/pthread-api-test.mjs --module dist/wasm-pthreads/highs.js \
+            --models models --out results/api-test.json
+      - name: WebAssembly benchmark (sequential, rotating order)
+        if: always()
+        run: |
+          spec=""
+          IFS=',' read -ra items <<< "${{ needs.config.outputs.wasm_variants }}"
+          for item in "${items[@]}"; do
+            name="${item%%=*}"; rest="${item#*=}"; build="${rest%%@*}"
+            extra=""; [ "$rest" != "$build" ] && extra="@${rest#*@}"
+            spec="${spec:+$spec,}${name}=dist/wasm-${build}/highs.js${extra}"
+          done
+          echo "variants: $spec"
+          node research/scripts/bench.mjs --variants "$spec" \
             --models models --seeds "${{ needs.config.outputs.seeds }}" --reps "${{ needs.config.outputs.reps }}" \
             --tiers "${{ needs.config.outputs.tiers }}" --time-limit "${{ needs.config.outputs.time_limit }}" \
             --out results/wasm.jsonl
@@ -147,12 +170,18 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          node research/scripts/summarize.mjs --wasm results/wasm.jsonl --native results/native.jsonl \
-            --build-info "dist/wasm-baseline,dist/wasm-${{ needs.config.outputs.candidate }}" | tee results/summary.md
+          infos=$(ls -d dist/wasm-* | paste -sd, -)
+          if [ "${{ needs.config.outputs.summarizer }}" = "threads" ]; then
+            node research/scripts/summarize-threads.mjs --wasm results/wasm.jsonl --api results/api-test.json \
+              --build-info "$infos" | tee results/summary.md
+          else
+            node research/scripts/summarize.mjs --wasm results/wasm.jsonl --native results/native.jsonl \
+              --build-info "$infos" | tee results/summary.md
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: perf-results-${{ needs.config.outputs.candidate }}
+          name: perf-results-${{ needs.config.outputs.label }}
           path: |
             results
             dist/*/build-info.txt
@@ -163,7 +192,7 @@ jobs:
         if: always()
         env:
           TOKEN: ${{ github.token }}
-          CANDIDATE: ${{ needs.config.outputs.candidate }}
+          CANDIDATE: ${{ needs.config.outputs.label }}
         run: |
           dir="runs/$(date -u +%Y%m%dT%H%M%SZ)-run${{ github.run_id }}-${CANDIDATE}"
           mkdir -p "pub/$dir"
