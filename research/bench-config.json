@@ -1,9 +1,10 @@
 {
-  "label": "pthreads-diagnose",
+  "label": "pthreads-eh-verify",
   "candidate": "pthreads",
   "builds": ["pthreads", "pthreads-dbg"],
   "wasmVariants": "pt2=pthreads@2@on",
-  "apiTest": false,
+  "apiTest": true,
+  "apiOnly": "threads-1,threads-2,threads-4,repeated-solves",
   "diagnose": true,
   "summarizer": "threads",
   "seeds": "0",

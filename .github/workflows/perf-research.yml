@@ -37,6 +37,7 @@ jobs:
       api_test: ${{ steps.c.outputs.api_test }}
       summarizer: ${{ steps.c.outputs.summarizer }}
       label: ${{ steps.c.outputs.label }}
+      api_only: ${{ steps.c.outputs.api_only }}
       diagnose: ${{ steps.c.outputs.diagnose }}
     steps:
       - uses: actions/checkout@v6
@@ -56,6 +57,7 @@ jobs:
           echo "summarizer=$(jq -r '.summarizer // "ab"' $cfg)" >> "$GITHUB_OUTPUT"
           echo "label=$(jq -r --arg c "$cand" '.label // $c' $cfg)" >> "$GITHUB_OUTPUT"
           echo "diagnose=$(jq -r '.diagnose // false' $cfg)" >> "$GITHUB_OUTPUT"
+          echo "api_only=$(jq -r '.apiOnly // ""' $cfg)" >> "$GITHUB_OUTPUT"
           echo "seeds=$(jq -r .seeds $cfg)" >> "$GITHUB_OUTPUT"
           echo "reps=$(jq -r .reps $cfg)" >> "$GITHUB_OUTPUT"
           echo "tiers=$(jq -r .tiers $cfg)" >> "$GITHUB_OUTPUT"
@@ -166,8 +168,9 @@ jobs:
       - name: WebAssembly interface and callback tests
         if: needs.config.outputs.api_test == 'true'
         run: |
+          only="${{ needs.config.outputs.api_only }}"
           node research/scripts/pthread-api-test.mjs --module dist/wasm-pthreads/highs.js \
-            --models models --out results/api-test.json
+            --models models --out results/api-test.json ${only:+--only "$only"}
       - name: WebAssembly benchmark (sequential, rotating order)
         if: always()
         run: |

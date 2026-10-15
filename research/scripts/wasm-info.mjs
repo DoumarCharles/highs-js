@@ -27,7 +27,7 @@ const limits = () => {
   const max = flags & 1 ? u32() : null;
   return { shared: Boolean(flags & 2), minPages: min, maxPages: max };
 };
-const out = { memories: [], features: [], threadImports: [] };
+const out = { memories: [], features: [], threadImports: [], exceptionTags: 0 };
 while (p < bytes.length) {
   const id = bytes[p++];
   const size = u32();
@@ -44,12 +44,18 @@ while (p < bytes.length) {
         limits();
       } else if (kind === 2) out.memories.push({ import: `${mod}.${field}`, ...limits() });
       else if (kind === 3) p += 2;
-      else if (kind === 4) u32();
+      else if (kind === 4) {
+        u32(); // tag attribute
+        u32(); // tag type index
+        out.tagImports = (out.tagImports ?? 0) + 1;
+      }
       if (/thread|futex|atomic|wait|notify/i.test(field)) out.threadImports.push(`${mod}.${field}`);
     }
   } else if (id === 5) {
     const count = u32();
     for (let i = 0; i < count; i += 1) out.memories.push({ defined: true, ...limits() });
+  } else if (id === 13) {
+    out.exceptionTags = u32();
   } else if (id === 0) {
     const sectionName = name();
     if (sectionName === "target_features") {

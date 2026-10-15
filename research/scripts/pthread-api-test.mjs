@@ -74,10 +74,10 @@ const TESTS = {
   // must be reused, never grown, and every solve valid.
   async "repeated-solves"(h) {
     const per = [];
-    for (let i = 0; i < 10; i += 1) per.push(solveOnce(h, SMALL, { threads: 4, parallel: "on", time_limit: 4, random_seed: i }));
+    for (let i = 0; i < 10; i += 1) per.push(solveOnce(h, SMALL, { threads: 4, parallel: "on", time_limit: 120, random_seed: i }));
     const maxTotal = Math.max(...per.map((p) => Math.max(p.after?.total ?? 0, p.during?.total ?? 0)));
-    const ok = per.every((p) => p.valid) && maxTotal <= 4 && per.every((p) => p.after?.running === 0);
-    return { ok, details: `statuses ${per.map((p) => p.status).join(",")}; ms ${per.map((p) => p.ms.toFixed(0)).join(",")}; dispose ms ${per.map((p) => p.disposeMs.toFixed(1)).join(",")}; max workers ${maxTotal}; OS threads after ${osThreads()}` };
+    const ok = per.every((p) => p.valid && p.gapOk) && maxTotal <= 4 && per.every((p) => p.after?.running === 0) && per.every((p) => (p.during?.running ?? 0) === 3);
+    return { ok, details: `statuses ${per.map((p) => p.status).join(",")}; gap reached ${per.map((p) => p.gapOk).join(",")}; nodes ${per.map((p) => p.nodes).join(",")}; pthreads running mid-solve ${per.map((p) => p.during?.running).join(",")}; CPU/wall ${per.map((p) => p.cpuWall.toFixed(2)).join(",")}; ms ${per.map((p) => p.ms.toFixed(0)).join(",")}; dispose ms ${per.map((p) => p.disposeMs.toFixed(1)).join(",")}; max workers ${maxTotal}; OS threads after ${osThreads()}` };
   },
 
   // Same model solved twice (scheduler persists between runs), then the
@@ -208,6 +208,12 @@ function callbackTest(h, names) {
   return { ok, details: `status ${statusName(h, modelStatus)} in ${(ms / 1000).toFixed(1)} s; calls ${JSON.stringify(counts)}; off-main-thread ${offMain}; solution vector lengths ${JSON.stringify([...lengths])} (model ${numCols}); valid ${check.ok}` };
 }
 
+function gapReached(h, model, name, status) {
+  const primal = model.info.get("objective_function_value");
+  const dual = model.info.get("mip_dual_bound");
+  return status === "optimal" && Math.abs(primal - dual) <= gapOf(name) + 1e-9 * Math.max(1, Math.abs(primal));
+}
+
 function stats(h) {
   return typeof h.researchPthreadStats === "function" ? h.researchPthreadStats() : null;
 }
@@ -229,10 +235,13 @@ function solveOnce(h, name, opts) {
   const { modelStatus } = model.run({ [h.constants.callbackType.mipLogging]: () => { during = stats(h); } });
   const ms = performance.now() - t0;
   const cpu = process.cpuUsage(cpu0);
+  const status = statusName(h, modelStatus);
   const valid = checkModel(model, name).ok;
+  const gapOk = gapReached(h, model, name, status);
+  const nodes = Number(model.info.get("mip_node_count"));
   const d0 = performance.now();
   model.dispose();
-  return { status: statusName(h, modelStatus), valid, ms, cpuWall: (cpu.user + cpu.system) / 1000 / ms, during, after: stats(h), disposeMs: performance.now() - d0 };
+  return { status, valid, gapOk, nodes, ms, cpuWall: (cpu.user + cpu.system) / 1000 / ms, during, after: stats(h), disposeMs: performance.now() - d0 };
 }
 async function verifyThreads(h, n, parallel) {
   const { callbackType } = h.constants;
@@ -253,10 +262,15 @@ async function verifyThreads(h, n, parallel) {
   const cpu = process.cpuUsage(cpu0);
   const cpuWall = (cpu.user + cpu.system) / 1000 / ms;
   const check = checkModel(model, MEDIUM);
+  const status = statusName(h, modelStatus);
+  const gapOk = gapReached(h, model, MEDIUM, status);
+  const nodes = Number(model.info.get("mip_node_count"));
+  const lpIters = Number(model.info.get("simplex_iteration_count"));
   model.dispose();
+  const after = stats(h);
   const expectWorkers = n > 1 && parallel === "on" ? Math.ceil(1.7 * n) : 1;
-  const ok = header?.threadCount === n && header.maxWorkers === expectWorkers && maxRunning === n - 1 && check.ok && (n === 1 || cpuWall > 1.3);
-  return { ok, details: `HiGHS header ${JSON.stringify(header)} (expected ${n} threads, ${expectWorkers} workers); pthreads running during solve ${maxRunning} (expected ${n - 1}); CPU/wall ${cpuWall.toFixed(2)}; ${statusName(h, modelStatus)} in ${(ms / 1000).toFixed(1)} s; valid ${check.ok}` };
+  const ok = header?.threadCount === n && header.maxWorkers === expectWorkers && maxRunning === n - 1 && check.ok && gapOk && (n === 1 || cpuWall > 1.3) && after?.running === 0;
+  return { ok, details: `HiGHS header ${JSON.stringify(header)} (expected ${n} threads, ${expectWorkers} workers); pthreads running during solve ${maxRunning} (expected ${n - 1}); CPU/wall ${cpuWall.toFixed(2)}; ${status} in ${(ms / 1000).toFixed(1)} s, ${nodes} nodes, ${lpIters} LP iterations; valid ${check.ok}; gap reached ${gapOk}; pthreads after dispose ${JSON.stringify(after)}` };
 }
 
 const stderrLines = [];
@@ -296,7 +310,9 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
   process.exit(0);
 } else if (isMainThread) {
   const tests = [];
+  const only = args.only ? new Set(args.only.split(",")) : null;
   for (const name of Object.keys(TESTS)) {
+    if (only && !only.has(name)) continue;
     const t0 = performance.now();
     const child = spawnSync(process.execPath, ["--trace-uncaught", new URL(import.meta.url).pathname, "--module", modulePath, "--models", modelsDir, "--test", name], {
       encoding: "utf8",

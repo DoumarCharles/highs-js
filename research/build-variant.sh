@@ -51,6 +51,13 @@ case "$variant" in
   # explicitly. Thread stacks default to STACK_SIZE (4 MB), set explicitly.
   # Memory: same growth settings and 2 GB maximum as the baseline (a shared
   # memory must declare its maximum; 2 GB is Emscripten's default).
+  #
+  # -fwasm-exceptions: HiGHS's task scheduler cancels stolen tasks by throwing
+  # HighsTask::Interrupt (parallel/HighsParallel.h, HighsSplitDeque.h). With
+  # Emscripten's default (exception catching disabled) that throw aborts the
+  # worker thread, and the main thread then unwinds out of model.run() with
+  # Emscripten's internal 'unwind' (runs 38684565460 / pthreads-dbg). Native
+  # Wasm exception handling is enabled for every object and the link.
   pthreads)
     NO_DEFAULT_THREADS=OFF
     # highs-js's post.js / extended.js run at load and call native functions
@@ -58,8 +65,8 @@ case "$variant" in
     # the Wasm instance, so those layers are wrapped to run on the main
     # runtime thread only (generated copies; src/ is untouched).
     GUARD_GLUE=1
-    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-pthread -DCMAKE_CXX_FLAGS=-pthread)
-    EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
+    EXTRA_CMAKE_ARGS=("-DCMAKE_C_FLAGS=-pthread -fwasm-exceptions" "-DCMAKE_CXX_FLAGS=-pthread -fwasm-exceptions")
+    EXTRA_LINK_FLAGS=(-pthread -fwasm-exceptions -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
       -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648)
     EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
   # Diagnostic only (never benchmarked): the pthreads variant plus Emscripten
@@ -67,8 +74,8 @@ case "$variant" in
   pthreads-dbg)
     NO_DEFAULT_THREADS=OFF
     GUARD_GLUE=1
-    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-pthread -DCMAKE_CXX_FLAGS=-pthread)
-    EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
+    EXTRA_CMAKE_ARGS=("-DCMAKE_C_FLAGS=-pthread -fwasm-exceptions" "-DCMAKE_CXX_FLAGS=-pthread -fwasm-exceptions")
+    EXTRA_LINK_FLAGS=(-pthread -fwasm-exceptions -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
       -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648 -sASSERTIONS=2
       -sPTHREADS_DEBUG=1 --profiling-funcs)
     EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
