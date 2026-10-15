@@ -123,7 +123,41 @@
     },
     "excluded": {
       "kHighsMaximumStringLength": "Internal buffer sizing is not a solver semantic.",
-      "kHighsCallbackMipDefineLazyConstraints": "This callback type is inert in the bundled HiGHS version."
+      "kHighsCallbackMipDefineLazyConstraints": "This callback type is inert in the bundled HiGHS version.",
+      "kHighsPresolveStatusException": "New in HiGHS latest (post-1.15.1); not yet part of the highs-js presolveStatus contract. Excluded to keep the 1.15.x JS interface unchanged.",
+      "kHighsModelStatusMemoryLimit": "New in HiGHS latest (post-1.15.1); not yet part of the highs-js modelStatus contract. getModelStatus() can still return the numeric value 18.",
+      "kHighsModelStatusHighsInterrupt": "New in HiGHS latest (post-1.15.1); not yet part of the highs-js modelStatus contract. getModelStatus() can still return the numeric value 19.",
+      "kHighsCallbackQpFirstFeasiblePoint": "New QP callback type in HiGHS latest; the highs-js callback adapter only accepts the 1.15.x callback types.",
+      "kHighsCallbackQpInterrupt": "New QP callback type in HiGHS latest; the highs-js callback adapter only accepts the 1.15.x callback types.",
+      "kHighsHessianOracleCallTypeMin": "Belongs to the Hessian oracle C API, which highs-js does not expose.",
+      "kHighsHessianOracleCallTypeEntry": "Belongs to the Hessian oracle C API, which highs-js does not expose.",
+      "kHighsHessianOracleCallTypeColumn": "Belongs to the Hessian oracle C API, which highs-js does not expose.",
+      "kHighsHessianOracleCallTypeProduct": "Belongs to the Hessian oracle C API, which highs-js does not expose.",
+      "kHighsHessianOracleCallTypeMax": "Belongs to the Hessian oracle C API, which highs-js does not expose.",
+      "kHighsPresolveRuleEmptyRow": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleSingletonRow": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleRedundantRow": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleEmptyCol": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleFixedCol": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDominatedCol": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleForcingRow": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleForcingCol": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleFreeColSubstitution": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDoubletonEquation": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDependentEquations": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDependentFreeCols": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleAggregator": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleParallelRowsAndCols": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleSparsify": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleProbing": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleEnumeration": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDualFixing": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleZeroCostSingleton": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleColStuffing": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleDualFixProbing": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleInitialSweep": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleFourierMotzkin": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract.",
+      "kHighsPresolveRuleWeaklyDominatedCol": "Presolve rule indices (bit positions for presolve_rule_off) are new C constants in HiGHS latest and are not part of the highs-js constants contract."
     }
   },
   "defaults": {
@@ -280,6 +314,13 @@
       "wasmExport": false,
       "functions": ["Highs_resetGlobalScheduler"],
       "reason": "The JavaScript build is single-threaded; exposing global scheduler control adds undefined-behavior risk and no useful capability."
+    },
+    {
+      "family": "hessian-oracle",
+      "exposure": "excluded",
+      "wasmExport": false,
+      "functions": ["Highs_passHessianOracle", "Highs_checkHessianOracle"],
+      "reason": "New in HiGHS latest (post-1.15.1). The oracle is a native function-pointer callback with no highs-js adapter; exposing it would add new interface surface rather than preserve the existing one."
     }
   ],
   "overrides": {
