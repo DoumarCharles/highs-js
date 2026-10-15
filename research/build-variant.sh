@@ -20,6 +20,7 @@ EXTRA_CMAKE_ARGS=()
 EXTRA_LINK_FLAGS=()
 EXTRA_POST_JS=()
 NO_DEFAULT_THREADS=ON
+GUARD_GLUE=0
 case "$variant" in
   baseline) ;;
   # Real cross-module LTO: compile HiGHS itself to LLVM bitcode so the
@@ -52,6 +53,11 @@ case "$variant" in
   # memory must declare its maximum; 2 GB is Emscripten's default).
   pthreads)
     NO_DEFAULT_THREADS=OFF
+    # highs-js's post.js / extended.js run at load and call native functions
+    # immediately; pthread workers execute the same script before they have
+    # the Wasm instance, so those layers are wrapped to run on the main
+    # runtime thread only (generated copies; src/ is untouched).
+    GUARD_GLUE=1
     EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-pthread -DCMAKE_CXX_FLAGS=-pthread)
     EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
       -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648)
@@ -64,6 +70,17 @@ mkdir -p "$bdir" "$out"
 
 node "$root/scripts/generate-highs-api.mjs" --check
 "$root/node_modules/.bin/tsc" -p "$root/tsconfig.runtime.json"
+
+POST_JS="$root/src/post.js"
+EXT_JS="$root/build/generated/extended.js"
+if [ "$GUARD_GLUE" = 1 ]; then
+  for f in post extended; do
+    src="$POST_JS"; [ "$f" = extended ] && src="$EXT_JS"
+    { echo "if (!ENVIRONMENT_IS_PTHREAD) {"; cat "$src"; echo; echo "}"; } > "$bdir/$f-main-thread-only.js"
+  done
+  POST_JS="$bdir/post-main-thread-only.js"
+  EXT_JS="$bdir/extended-main-thread-only.js"
+fi
 
 cd "$bdir"
 emcmake cmake --fresh "$root/HiGHS" \
@@ -92,8 +109,8 @@ emcc -O3 \
   -I "$root/HiGHS/highs" \
   -I "$bdir" \
   --pre-js "$root/src/pre.js" \
-  --post-js "$root/src/post.js" \
-  --post-js "$root/build/generated/extended.js" \
+  --post-js "$POST_JS" \
+  --post-js "$EXT_JS" \
   "${EXTRA_POST_JS[@]}" \
   "$root/src/highs_js_bridge.cpp" \
   lib/*.a -o "$out/highs.js"
@@ -120,6 +137,7 @@ wasminfo="$(node "$root/research/scripts/wasm-info.mjs" "$out/highs.wasm")"
   echo "variant: $variant"
   echo "extra cmake args: ${EXTRA_CMAKE_ARGS[*]:-(none)}"
   echo "extra link flags: ${EXTRA_LINK_FLAGS[*]:-(none)}"
+  echo "JS glue guarded to main runtime thread: $GUARD_GLUE"
   echo "emcc: $(emcc --version | head -n 1)"
   echo "HiGHS commit: $(git -C "$root/HiGHS" rev-parse HEAD)"
   grep -E "Build type|IPO / LTO|perf-research:" cmake-configure.log || true
