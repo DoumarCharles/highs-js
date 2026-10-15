@@ -37,6 +37,7 @@ jobs:
       api_test: ${{ steps.c.outputs.api_test }}
       summarizer: ${{ steps.c.outputs.summarizer }}
       label: ${{ steps.c.outputs.label }}
+      diagnose: ${{ steps.c.outputs.diagnose }}
     steps:
       - uses: actions/checkout@v6
       - id: c
@@ -54,6 +55,7 @@ jobs:
           echo "api_test=$(jq -r '.apiTest // false' $cfg)" >> "$GITHUB_OUTPUT"
           echo "summarizer=$(jq -r '.summarizer // "ab"' $cfg)" >> "$GITHUB_OUTPUT"
           echo "label=$(jq -r --arg c "$cand" '.label // $c' $cfg)" >> "$GITHUB_OUTPUT"
+          echo "diagnose=$(jq -r '.diagnose // false' $cfg)" >> "$GITHUB_OUTPUT"
           echo "seeds=$(jq -r .seeds $cfg)" >> "$GITHUB_OUTPUT"
           echo "reps=$(jq -r .reps $cfg)" >> "$GITHUB_OUTPUT"
           echo "tiers=$(jq -r .tiers $cfg)" >> "$GITHUB_OUTPUT"
@@ -139,6 +141,18 @@ jobs:
           nproc; lscpu | grep -E "Model name|^CPU\(s\)|Thread|MHz" || true; free -m; node --version
       - name: Generate synthetic models
         run: node research/models/generate.mjs models
+      - name: Diagnose threaded solves
+        if: needs.config.outputs.diagnose == 'true'
+        run: |
+          mkdir -p results
+          for b in dist/wasm-*; do
+            [ -f "$b/highs.js" ] || continue
+            for t in 1 2 4; do
+              echo "=== $b threads=$t ===" | tee -a results/diagnose.txt
+              timeout 120 node --trace-uncaught research/scripts/repro-threads.cjs "$b/highs.js" models/gapd_a5_j50_s4.lp $t 5 2>&1 \
+                | grep -v "^\[out\] *[A-Z ] *[0-9]" | tail -n 60 | tee -a results/diagnose.txt || true
+            done
+          done
       - name: WebAssembly interface and callback tests
         if: needs.config.outputs.api_test == 'true'
         run: |

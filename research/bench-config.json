@@ -1,13 +1,14 @@
 {
-  "label": "pthreads-debug1",
+  "label": "pthreads-diagnose",
   "candidate": "pthreads",
-  "builds": ["baseline", "pthreads"],
+  "builds": ["pthreads", "pthreads-dbg"],
   "wasmVariants": "pt2=pthreads@2@on",
-  "apiTest": true,
+  "apiTest": false,
+  "diagnose": true,
   "summarizer": "threads",
   "seeds": "0",
   "reps": 1,
-  "tiers": "medium",
+  "tiers": "none",
   "timeLimit": 300,
   "nativeConfigs": "none",
   "nativeReps": 1

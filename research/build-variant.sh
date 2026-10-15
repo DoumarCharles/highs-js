@@ -62,6 +62,15 @@ case "$variant" in
     EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
       -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648)
     EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
+  # Diagnostic only (never benchmarked): the pthreads variant plus Emscripten
+  # runtime assertions, for clearer failure messages.
+  pthreads-dbg)
+    NO_DEFAULT_THREADS=OFF
+    GUARD_GLUE=1
+    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-pthread -DCMAKE_CXX_FLAGS=-pthread)
+    EXTRA_LINK_FLAGS=(-pthread -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2
+      -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648 -sASSERTIONS=2)
+    EXTRA_POST_JS=(--post-js "$root/research/pthreads-probe.js") ;;
   *) echo "unknown variant: $variant" >&2; exit 2 ;;
 esac
 
