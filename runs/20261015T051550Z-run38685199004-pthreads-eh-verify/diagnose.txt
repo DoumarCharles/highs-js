@@ -1,0 +1,1001 @@
+=== dist/wasm-pthreads model=tiny threads=1 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=tiny threads=2 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=tiny threads=4 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=gapd_a5_j50_s4 threads=1 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 1 (of 4 threads). Using 1 max workers. Parallel search off
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3089
+[out]   Gap               0.0324% (tolerance: 0.162%)
+[out]   P-D integral      0.0994429461244
+[out]   Solution status   feasible
+[out]   Timing            15.30
+[out]                         MIP    time [calls] = 0.02 [1]
+[out]                         subMIP time [calls] = 0.08 [81]
+[out]                         MIP    time [calls] = 13.48 [1]
+[out]                         subMIP time [calls] = 1.70 [64]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [81]
+[out]   Max sub-MIP depth 8
+[out]   Nodes             1179
+[out]   Repair LPs        0
+[out]   LP iterations     113947
+run returned 7 mipLogging callbacks 11 nodes 1179
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=gapd_a5_j50_s4 threads=2 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 2 (of 4 threads). Using 4 max workers. Parallel search on
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3088
+[out]   Gap               0.0647% (tolerance: 0.162%)
+[out]   P-D integral      0.0601510179868
+[out]   Solution status   feasible
+[out]   Timing            4.78
+[out]                         MIP    time [calls] = 0.01 [1]
+[out]                         subMIP time [calls] = 0.02 [19]
+[out]                         MIP    time [calls] = 4.22 [1]
+[out]                         subMIP time [calls] = 0.51 [16]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [19]
+[out]   Max sub-MIP depth 8
+[out]   Nodes             593
+[out]   Repair LPs        0
+[out]   LP iterations     79062
+run returned 7 mipLogging callbacks 10 nodes 593
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=gapd_a5_j50_s4 threads=4 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 4 (of 4 threads). Using 7 max workers. Parallel search on
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3088
+[out]   Gap               0.0647% (tolerance: 0.162%)
+[out]   P-D integral      0.0717697101818
+[out]   Solution status   feasible
+[out]   Timing            7.02
+[out]                         MIP    time [calls] = 0.02 [1]
+[out]                         subMIP time [calls] = 0.02 [19]
+[out]                         MIP    time [calls] = 6.48 [1]
+[out]                         subMIP time [calls] = 0.49 [16]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [19]
+[out]   Max sub-MIP depth 10
+[out]   Nodes             997
+[out]   Repair LPs        0
+[out]   LP iterations     116801
+run returned 7 mipLogging callbacks 9 nodes 997
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=tiny threads=1 ===
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:0,t:0x00000000: locateFile: highs.wasm scriptDirectory: /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/
+w:0,t:0x00000000: asynchronously preparing wasm
+w:0,t:0x00000000: receiveInstance
+w:0,t:0x00000000: assigning exports
+w:0,t:0x00000000: writeStackCookie: 0x000403c0
+w:0,t:0x00000000: addRunDependency loading-workers
+w:0,t:0x00000000: run: waiting on runDependencies
+w:1,t:0x00000000: worker: loading module
+w:1,t:0x00000000: worker: using thread-local handler: print
+w:1,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:2,t:0x00000000: worker: loading module
+w:2,t:0x00000000: worker: using thread-local handler: print
+w:2,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: receiveInstance
+w:1,t:0x00000000: assigning exports
+w:2,t:0x00000000: receiveInstance
+w:2,t:0x00000000: assigning exports
+w:1,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:3,t:0x00000000: worker: loading module
+w:3,t:0x00000000: worker: using thread-local handler: print
+w:3,t:0x00000000: worker: using thread-local handler: printErr
+w:3,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:3,t:0x00000000: receiveInstance
+w:3,t:0x00000000: assigning exports
+w:3,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:4,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=tiny threads=2 ===
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:0,t:0x00000000: locateFile: highs.wasm scriptDirectory: /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/
+w:0,t:0x00000000: asynchronously preparing wasm
+w:0,t:0x00000000: receiveInstance
+w:0,t:0x00000000: assigning exports
+w:0,t:0x00000000: writeStackCookie: 0x000403c0
+w:0,t:0x00000000: addRunDependency loading-workers
+w:0,t:0x00000000: run: waiting on runDependencies
+w:1,t:0x00000000: worker: loading module
+w:1,t:0x00000000: worker: using thread-local handler: print
+w:1,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: receiveInstance
+w:1,t:0x00000000: assigning exports
+w:2,t:0x00000000: worker: loading module
+w:2,t:0x00000000: worker: using thread-local handler: print
+w:2,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:2,t:0x00000000: receiveInstance
+w:2,t:0x00000000: assigning exports
+w:3,t:0x00000000: worker: loading module
+w:3,t:0x00000000: worker: using thread-local handler: print
+w:3,t:0x00000000: worker: using thread-local handler: printErr
+w:3,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:3,t:0x00000000: receiveInstance
+w:3,t:0x00000000: assigning exports
+w:3,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:4,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+w:0,t:0x0003e704: createThread: 0x0055e040
+w:4,t:0x00000000: establishStackSpace: 0x00960300 -> 0x00560300
+w:4,t:0x00000000: setStackLimits: 0x00960300, 0x00560300
+w:4,t:0x00000000: writeStackCookie: 0x00560300
+w:4,t:0x0055e040: threadInitTLS
+w:4,t:0x0055e040: invokeEntryPoint: 0x000001ed
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x0055e040
+w:0,t:0x0003e704: cleanupThread: 0x0055e040
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=tiny threads=4 ===
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:0,t:0x00000000: locateFile: highs.wasm scriptDirectory: /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/
+w:0,t:0x00000000: asynchronously preparing wasm
+w:0,t:0x00000000: receiveInstance
+w:0,t:0x00000000: assigning exports
+w:0,t:0x00000000: writeStackCookie: 0x000403c0
+w:0,t:0x00000000: addRunDependency loading-workers
+w:0,t:0x00000000: run: waiting on runDependencies
+w:1,t:0x00000000: worker: loading module
+w:1,t:0x00000000: worker: using thread-local handler: print
+w:1,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: receiveInstance
+w:1,t:0x00000000: assigning exports
+w:1,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:3,t:0x00000000: worker: loading module
+w:3,t:0x00000000: worker: using thread-local handler: print
+w:3,t:0x00000000: worker: using thread-local handler: printErr
+w:3,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:3,t:0x00000000: receiveInstance
+w:3,t:0x00000000: assigning exports
+w:3,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:2,t:0x00000000: worker: loading module
+w:2,t:0x00000000: worker: using thread-local handler: print
+w:2,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: receiveInstance
+w:2,t:0x00000000: assigning exports
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+w:0,t:0x0003e704: createThread: 0x0065e2d0
+w:0,t:0x0003e704: createThread: 0x00a605b0
+w:4,t:0x00000000: establishStackSpace: 0x00a60590 -> 0x00660590
+w:4,t:0x00000000: setStackLimits: 0x00a60590, 0x00660590
+w:3,t:0x00000000: establishStackSpace: 0x00e62870 -> 0x00a62870
+w:4,t:0x00000000: writeStackCookie: 0x00660590
+w:4,t:0x0065e2d0: threadInitTLS
+w:4,t:0x0065e2d0: invokeEntryPoint: 0x000001ed
+w:3,t:0x00000000: setStackLimits: 0x00e62870, 0x00a62870
+w:3,t:0x00000000: writeStackCookie: 0x00a62870
+w:3,t:0x00a605b0: threadInitTLS
+w:3,t:0x00a605b0: invokeEntryPoint: 0x000001ed
+w:0,t:0x0003e704: growMemory: 20185088 (+3407872 bytes / 52 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=20185088
+w:0,t:0x0003e704: Heap resize call from 16777216 to 20185088 took 0.144287109375 msecs. Success: true
+w:0,t:0x0003e704: createThread: 0x00e62890
+w:3,t:0x00a605b0: updateMemoryViews: first=false size=20185088
+w:2,t:0x00000000: updateMemoryViews: first=false size=20185088
+w:2,t:0x00000000: establishStackSpace: 0x01264b50 -> 0x00e64b50
+w:2,t:0x00000000: setStackLimits: 0x01264b50, 0x00e64b50
+w:2,t:0x00000000: writeStackCookie: 0x00e64b50
+w:2,t:0x00e62890: threadInitTLS
+w:2,t:0x00e62890: invokeEntryPoint: 0x000001ed
+w:4,t:0x0065e2d0: updateMemoryViews: first=false size=20185088
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x0065e2d0
+w:0,t:0x0003e704: cleanupThread: 0x0065e2d0
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00a605b0
+w:0,t:0x0003e704: cleanupThread: 0x00a605b0
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00e62890
+w:0,t:0x0003e704: cleanupThread: 0x00e62890
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=gapd_a5_j50_s4 threads=1 ===
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:0,t:0x00000000: locateFile: highs.wasm scriptDirectory: /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/
+w:0,t:0x00000000: asynchronously preparing wasm
+w:0,t:0x00000000: receiveInstance
+w:0,t:0x00000000: assigning exports
+w:0,t:0x00000000: writeStackCookie: 0x000403c0
+w:0,t:0x00000000: addRunDependency loading-workers
+w:0,t:0x00000000: run: waiting on runDependencies
+w:4,t:0x00000000: worker: loading module
+w:1,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:1,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: worker: using thread-local handler: printErr
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:3,t:0x00000000: worker: loading module
+w:3,t:0x00000000: worker: using thread-local handler: print
+w:3,t:0x00000000: worker: using thread-local handler: printErr
+w:3,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:1,t:0x00000000: receiveInstance
+w:1,t:0x00000000: assigning exports
+w:3,t:0x00000000: receiveInstance
+w:3,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:3,t:0x00000000: initRuntime
+w:1,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:2,t:0x00000000: worker: loading module
+w:2,t:0x00000000: worker: using thread-local handler: print
+w:2,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:2,t:0x00000000: receiveInstance
+w:2,t:0x00000000: assigning exports
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 1 (of 4 threads). Using 1 max workers. Parallel search off
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+w:0,t:0x0003e704: growMemory: 20185088 (+3407872 bytes / 52 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=20185088
+w:0,t:0x0003e704: Heap resize call from 16777216 to 20185088 took 0.16845703125 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 24248320 (+4063232 bytes / 62 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=24248320
+w:0,t:0x0003e704: Heap resize call from 20185088 to 24248320 took 0.09619140625 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 29097984 (+4849664 bytes / 74 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=29097984
+w:0,t:0x0003e704: Heap resize call from 24248320 to 29097984 took 0.14794921875 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 34930688 (+5832704 bytes / 89 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=34930688
+w:0,t:0x0003e704: Heap resize call from 29097984 to 34930688 took 0.0908203125 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 41943040 (+7012352 bytes / 107 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=41943040
+w:0,t:0x0003e704: Heap resize call from 34930688 to 41943040 took 0.16552734375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 50331648 (+8388608 bytes / 128 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=50331648
+w:0,t:0x0003e704: Heap resize call from 41943040 to 50331648 took 0.148681640625 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 60424192 (+10092544 bytes / 154 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=60424192
+w:0,t:0x0003e704: Heap resize call from 50331648 to 60424192 took 0.057861328125 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 72548352 (+12124160 bytes / 185 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=72548352
+w:0,t:0x0003e704: Heap resize call from 60424192 to 72548352 took 0.08740234375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 87097344 (+14548992 bytes / 222 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=87097344
+w:0,t:0x0003e704: Heap resize call from 72548352 to 87097344 took 0.21142578125 msecs. Success: true
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3089
+[out]   Gap               0.0324% (tolerance: 0.162%)
+[out]   P-D integral      0.101439546321
+[out]   Solution status   feasible
+[out]   Timing            15.76
+[out]                         MIP    time [calls] = 0.02 [1]
+[out]                         subMIP time [calls] = 0.09 [81]
+[out]                         MIP    time [calls] = 13.81 [1]
+[out]                         subMIP time [calls] = 1.83 [64]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [81]
+[out]   Max sub-MIP depth 8
+[out]   Nodes             1179
+[out]   Repair LPs        0
+[out]   LP iterations     113947
+run returned 7 mipLogging callbacks 11 nodes 1179
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=gapd_a5_j50_s4 threads=2 ===
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: Allocating a new web worker from /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js
+w:0,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:0,t:0x00000000: locateFile: highs.wasm scriptDirectory: /home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/
+w:0,t:0x00000000: asynchronously preparing wasm
+w:0,t:0x00000000: receiveInstance
+w:0,t:0x00000000: assigning exports
+w:0,t:0x00000000: writeStackCookie: 0x000403c0
+w:0,t:0x00000000: addRunDependency loading-workers
+w:0,t:0x00000000: run: waiting on runDependencies
+w:3,t:0x00000000: worker: loading module
+w:3,t:0x00000000: worker: using thread-local handler: print
+w:3,t:0x00000000: worker: using thread-local handler: printErr
+w:3,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:2,t:0x00000000: worker: loading module
+w:2,t:0x00000000: worker: using thread-local handler: print
+w:2,t:0x00000000: worker: using thread-local handler: printErr
+w:2,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:3,t:0x00000000: receiveInstance
+w:3,t:0x00000000: assigning exports
+w:2,t:0x00000000: receiveInstance
+w:2,t:0x00000000: assigning exports
+w:3,t:0x00000000: initRuntime
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:1,t:0x00000000: worker: loading module
+w:1,t:0x00000000: worker: using thread-local handler: print
+w:1,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:1,t:0x00000000: receiveInstance
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:1,t:0x00000000: assigning exports
+w:1,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+w:0,t:0x0003e704: createThread: 0x00581880
+w:4,t:0x00000000: establishStackSpace: 0x00983b40 -> 0x00583b40
+w:4,t:0x00000000: setStackLimits: 0x00983b40, 0x00583b40
+w:4,t:0x00000000: writeStackCookie: 0x00583b40
+w:4,t:0x00581880: threadInitTLS
+w:4,t:0x00581880: invokeEntryPoint: 0x000001ed
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 2 (of 4 threads). Using 4 max workers. Parallel search on
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+w:0,t:0x0003e704: growMemory: 20185088 (+3407872 bytes / 52 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=20185088
+w:0,t:0x0003e704: Heap resize call from 16777216 to 20185088 took 0.204833984375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 24248320 (+4063232 bytes / 62 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=24248320
+w:0,t:0x0003e704: Heap resize call from 20185088 to 24248320 took 0.131591796875 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 29097984 (+4849664 bytes / 74 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=29097984
+w:0,t:0x0003e704: Heap resize call from 24248320 to 29097984 took 0.1337890625 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 34930688 (+5832704 bytes / 89 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=34930688
+w:0,t:0x0003e704: Heap resize call from 29097984 to 34930688 took 0.189208984375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 41943040 (+7012352 bytes / 107 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=41943040
+w:0,t:0x0003e704: Heap resize call from 34930688 to 41943040 took 0.13134765625 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 50331648 (+8388608 bytes / 128 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=50331648
+w:0,t:0x0003e704: Heap resize call from 41943040 to 50331648 took 0.172607421875 msecs. Success: true
+w:4,t:0x00581880: updateMemoryViews: first=false size=50331648
+w:0,t:0x0003e704: growMemory: 60424192 (+10092544 bytes / 154 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=60424192
+w:0,t:0x0003e704: Heap resize call from 50331648 to 60424192 took 0.1494140625 msecs. Success: true
+w:4,t:0x00581880: updateMemoryViews: first=false size=60424192
+w:0,t:0x0003e704: growMemory: 72548352 (+12124160 bytes / 185 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=72548352
+w:0,t:0x0003e704: Heap resize call from 60424192 to 72548352 took 0.16748046875 msecs. Success: true
+w:4,t:0x00581880: updateMemoryViews: first=false size=72548352
+w:0,t:0x0003e704: growMemory: 87097344 (+14548992 bytes / 222 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=87097344
+w:0,t:0x0003e704: Heap resize call from 72548352 to 87097344 took 0.1796875 msecs. Success: true
+w:4,t:0x00581880: updateMemoryViews: first=false size=87097344
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3088
+[out]   Gap               0.0647% (tolerance: 0.162%)
+[out]   P-D integral      0.0613404617654
+[out]   Solution status   feasible
+[out]   Timing            5.03
+[out]                         MIP    time [calls] = 0.02 [1]
+[out]                         subMIP time [calls] = 0.03 [19]
+[out]                         MIP    time [calls] = 4.44 [1]
+[out]                         subMIP time [calls] = 0.55 [16]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [19]
+[out]   Max sub-MIP depth 8
+[out]   Nodes             593
+[out]   Repair LPs        0
+[out]   LP iterations     79062
+run returned 7 mipLogging callbacks 10 nodes 593
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00581880
+w:0,t:0x0003e704: cleanupThread: 0x00581880
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads-dbg model=gapd_a5_j50_s4 threads=4 ===
+w:2,t:0x00000000: assigning exports
+w:3,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:2,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:4,t:0x00000000: worker: loading module
+w:4,t:0x00000000: worker: using thread-local handler: print
+w:4,t:0x00000000: worker: using thread-local handler: printErr
+w:4,t:0x00000000: updateMemoryViews: first=true size=16777216
+w:4,t:0x00000000: receiveInstance
+w:4,t:0x00000000: assigning exports
+w:4,t:0x00000000: initRuntime
+w:0,t:0x00000000: main thread: received message '3' from worker. [object Object]
+w:0,t:0x00000000: removeRunDependency loading-workers
+w:0,t:0x00000000: initRuntime
+w:0,t:0x00000000: setStackLimits: 0x004403c0, 0x000403c0
+w:0,t:0x0003e704: threadInitTLS
+w:0,t:0x0003e704: done __wasm_call_ctors
+w:0,t:0x0003e704: done ATPOSTCTORS
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+w:0,t:0x0003e704: createThread: 0x00681b10
+w:0,t:0x0003e704: createThread: 0x00a83df0
+w:3,t:0x00000000: establishStackSpace: 0x00e860b0 -> 0x00a860b0
+w:3,t:0x00000000: setStackLimits: 0x00e860b0, 0x00a860b0
+w:4,t:0x00000000: establishStackSpace: 0x00a83dd0 -> 0x00683dd0
+w:4,t:0x00000000: setStackLimits: 0x00a83dd0, 0x00683dd0
+w:4,t:0x00000000: writeStackCookie: 0x00683dd0
+w:4,t:0x00681b10: threadInitTLS
+w:4,t:0x00681b10: invokeEntryPoint: 0x000001ed
+w:3,t:0x00000000: writeStackCookie: 0x00a860b0
+w:3,t:0x00a83df0: threadInitTLS
+w:3,t:0x00a83df0: invokeEntryPoint: 0x000001ed
+w:0,t:0x0003e704: growMemory: 20185088 (+3407872 bytes / 52 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=20185088
+w:0,t:0x0003e704: Heap resize call from 16777216 to 20185088 took 0.12841796875 msecs. Success: true
+w:0,t:0x0003e704: createThread: 0x00e860d0
+w:2,t:0x00000000: updateMemoryViews: first=false size=20185088
+w:2,t:0x00000000: establishStackSpace: 0x01288390 -> 0x00e88390
+w:2,t:0x00000000: setStackLimits: 0x01288390, 0x00e88390
+w:2,t:0x00000000: writeStackCookie: 0x00e88390
+w:2,t:0x00e860d0: threadInitTLS
+w:2,t:0x00e860d0: invokeEntryPoint: 0x000001ed
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=20185088
+w:4,t:0x00681b10: updateMemoryViews: first=false size=20185088
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 4 (of 4 threads). Using 7 max workers. Parallel search on
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+w:0,t:0x0003e704: growMemory: 24248320 (+4063232 bytes / 62 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=24248320
+w:0,t:0x0003e704: Heap resize call from 20185088 to 24248320 took 0.126953125 msecs. Success: true
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=24248320
+w:0,t:0x0003e704: growMemory: 29097984 (+4849664 bytes / 74 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=29097984
+w:0,t:0x0003e704: Heap resize call from 24248320 to 29097984 took 0.22607421875 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 34930688 (+5832704 bytes / 89 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=34930688
+w:0,t:0x0003e704: Heap resize call from 29097984 to 34930688 took 0.152099609375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 41943040 (+7012352 bytes / 107 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=41943040
+w:0,t:0x0003e704: Heap resize call from 34930688 to 41943040 took 0.17431640625 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 50331648 (+8388608 bytes / 128 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=50331648
+w:0,t:0x0003e704: Heap resize call from 41943040 to 50331648 took 0.1630859375 msecs. Success: true
+w:0,t:0x0003e704: growMemory: 60424192 (+10092544 bytes / 154 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=60424192
+w:0,t:0x0003e704: Heap resize call from 50331648 to 60424192 took 0.172607421875 msecs. Success: true
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=60424192
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=60424192
+w:4,t:0x00681b10: updateMemoryViews: first=false size=60424192
+w:0,t:0x0003e704: growMemory: 72548352 (+12124160 bytes / 185 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=72548352
+w:0,t:0x0003e704: Heap resize call from 60424192 to 72548352 took 0.174072265625 msecs. Success: true
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=72548352
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=72548352
+w:4,t:0x00681b10: updateMemoryViews: first=false size=72548352
+w:0,t:0x0003e704: growMemory: 87097344 (+14548992 bytes / 222 pages)
+w:0,t:0x0003e704: updateMemoryViews: first=false size=87097344
+w:0,t:0x0003e704: Heap resize call from 72548352 to 87097344 took 0.173095703125 msecs. Success: true
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=87097344
+w:4,t:0x00681b10: updateMemoryViews: first=false size=87097344
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=87097344
+w:2,t:0x00e860d0: growMemory: 104529920 (+17432576 bytes / 266 pages)
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=104529920
+w:2,t:0x00e860d0: Heap resize call from 87097344 to 104529920 took 0.193359375 msecs. Success: true
+w:4,t:0x00681b10: updateMemoryViews: first=false size=104529920
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=104529920
+w:0,t:0x0003e704: updateMemoryViews: first=false size=104529920
+w:3,t:0x00a83df0: growMemory: 125435904 (+20905984 bytes / 319 pages)
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=125435904
+w:3,t:0x00a83df0: Heap resize call from 104529920 to 125435904 took 0.181884765625 msecs. Success: true
+w:4,t:0x00681b10: updateMemoryViews: first=false size=125435904
+w:0,t:0x0003e704: updateMemoryViews: first=false size=125435904
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=125435904
+w:3,t:0x00a83df0: growMemory: 150536192 (+25100288 bytes / 383 pages)
+w:3,t:0x00a83df0: updateMemoryViews: first=false size=150536192
+w:3,t:0x00a83df0: Heap resize call from 125435904 to 150536192 took 0.19580078125 msecs. Success: true
+w:2,t:0x00e860d0: updateMemoryViews: first=false size=150536192
+w:4,t:0x00681b10: updateMemoryViews: first=false size=150536192
+w:0,t:0x0003e704: updateMemoryViews: first=false size=150536192
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3088
+[out]   Gap               0.0647% (tolerance: 0.162%)
+[out]   P-D integral      0.0778400869781
+[out]   Solution status   feasible
+[out]   Timing            7.67
+[out]                         MIP    time [calls] = 0.01 [1]
+[out]                         subMIP time [calls] = 0.03 [19]
+[out]                         MIP    time [calls] = 7.08 [1]
+[out]                         subMIP time [calls] = 0.54 [16]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [19]
+[out]   Max sub-MIP depth 10
+[out]   Nodes             997
+[out]   Repair LPs        0
+[out]   LP iterations     116801
+run returned 7 mipLogging callbacks 9 nodes 997
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00681b10
+w:0,t:0x0003e704: cleanupThread: 0x00681b10
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00a83df0
+w:0,t:0x0003e704: cleanupThread: 0x00a83df0
+w:0,t:0x0003e704: _emscripten_thread_cleanup: 0x00e860d0
+w:0,t:0x0003e704: cleanupThread: 0x00e860d0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0

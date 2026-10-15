@@ -1,0 +1,34 @@
+{
+  "module": "dist/wasm-pthreads/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "threads-1",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":1,\"hardwareThreads\":4,\"maxWorkers\":1,\"parallelSearch\":\"off\"} (expected 1 threads, 1 workers); pthreads running during solve 0 (expected 0); CPU/wall 1.09; optimal in 15.5 s, 1179 nodes, 113947 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 95.767662,
+      "ms": 15663.60366
+    },
+    {
+      "name": "threads-2",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":2,\"hardwareThreads\":4,\"maxWorkers\":4,\"parallelSearch\":\"on\"} (expected 2 threads, 4 workers); pthreads running during solve 1 (expected 1); CPU/wall 1.90; optimal in 4.9 s, 593 nodes, 79062 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 94.411172,
+      "ms": 5041.465007000001
+    },
+    {
+      "name": "threads-4",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":4,\"hardwareThreads\":4,\"maxWorkers\":7,\"parallelSearch\":\"on\"} (expected 4 threads, 7 workers); pthreads running during solve 3 (expected 3); CPU/wall 2.91; optimal in 7.2 s, 997 nodes, 116801 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 97.984404,
+      "ms": 7326.280113000001
+    },
+    {
+      "name": "repeated-solves",
+      "ok": true,
+      "details": "statuses optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal; gap reached true,true,true,true,true,true,true,true,true,true; nodes 2211,2129,1819,1633,1403,2168,1919,1916,1739,1290; pthreads running mid-solve 3,3,3,3,3,3,3,3,3,3; CPU/wall 2.92,2.65,2.79,2.63,2.83,2.80,2.65,2.52,2.75,2.64; ms 9593,7865,7750,7288,7235,9267,7496,8831,7189,7139; dispose ms 0.6,0.1,0.4,0.1,0.3,0.2,3.0,0.2,0.1,0.4; max workers 4; OS threads after 11",
+      "loadMs": 94.01489699999999,
+      "ms": 79866.426083
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+variant: pthreads-dbg
+extra cmake args: -DCMAKE_C_FLAGS=-pthread -fwasm-exceptions -DCMAKE_CXX_FLAGS=-pthread -fwasm-exceptions
+extra link flags: -pthread -fwasm-exceptions -sPTHREAD_POOL_SIZE=4 -sPTHREAD_POOL_SIZE_STRICT=2 -sDEFAULT_PTHREAD_STACK_SIZE=4194304 -sMAXIMUM_MEMORY=2147483648 -sASSERTIONS=2 -sPTHREADS_DEBUG=1 --profiling-funcs
+JS glue guarded to main runtime thread: 1
+extended API option rule: /concurr/i.test(name)
+emcc: emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.3 (283e2d130132859fde6a4e4c87fd254b38127651)
+HiGHS commit: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+-- Build type: Release
+-- IPO / LTO supported by compiler: YES
+-- IPO / LTO: disabled by default when building a static library; set CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON to enable
+CMAKE_CXX_FLAGS (cache): -pthread -fwasm-exceptions
+CMAKE_CXX_FLAGS_RELEASE (cache): -O3 -DNDEBUG
+HighsMipSolver.cpp.o magic:  \0 a s m
+HighsMipSolver.cpp.o wasm info: {"memories":[{"import":"env.__linear_memory","shared":false,"minPages":1,"maxPages":null,"minMB":0.0625}],"features":["+atomics","+bulk-memory","+bulk-memory-opt","+call-indirect-overlong","+exception-handling","+multivalue","+mutable-globals","+nontrapping-fptoint","+reference-types","+sign-ext"],"threadImports":["env._ZTHN17HighsTaskExecutor25threadLocalWorkerDequePtrE","env._ZN17HighsLpRelaxation22notifyCutPoolsLpCopiedEi","env._ZNSt3__218condition_variable10notify_oneEv","env._ZNSt3__218condition_variable4waitERNS_11unique_lockINS_5mutexEEE","GOT.mem._ZN17HighsTaskExecutor25threadLocalWorkerDequePtrE","GOT.func._ZTHN17HighsTaskExecutor25threadLocalWorkerDequePtrE"],"exceptionTags":0,"tagImports":1}
+highs.wasm info: {"memories":[{"import":"env.memory","shared":true,"minPages":256,"maxPages":32768,"minMB":16,"maxMB":2048}],"features":[],"threadImports":["env._emscripten_thread_set_strongref","env._emscripten_init_main_thread_js","env._emscripten_thread_mailbox_await","env._emscripten_receive_on_main_thread_js","env.__pthread_create_js","env._emscripten_thread_cleanup","env._emscripten_notify_mailbox_postmessage"],"exceptionTags":1}
+HConfig.h threading: /* #undef HIGHS_NO_DEFAULT_THREADS */
+cmake: emcmake: cmake --fresh /home/runner/work/highs-js/highs-js/HiGHS -DZLIB=OFF -DFAST_BUILD=OFF -DBUILD_SHARED_LIBS=OFF -DHIGHSINT64=OFF -DHIGHS_NO_DEFAULT_THREADS=OFF '-DCMAKE_C_FLAGS=-pthread -fwasm-exceptions' '-DCMAKE_CXX_FLAGS=-pthread -fwasm-exceptions' -DCMAKE_TOOLCHAIN_FILE=/home/runner/work/_temp/2969e348-35f6-466d-9dd8-65d9149f4651/emsdk-main/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DCMAKE_CROSSCOMPILING_EMULATOR=/home/runner/work/_temp/2969e348-35f6-466d-9dd8-65d9149f4651/emsdk-main/node/22.16.0_64bit/bin/node in directory /home/runner/work/highs-js/highs-js/research-build/pthreads-dbg
+cmake: -- Found Threads: TRUE
+cmake: -- Build files have been written to: /home/runner/work/highs-js/highs-js/research-build/pthreads-dbg
+objects in libhighs.a: 216
+compile seconds: 89
+link seconds: 39
+highs.wasm bytes: 4623007
+highs.wasm gzip-9 bytes: 1372003
+highs.wasm sha256: 4e130be9bbff9842a37279ab510dd605e2801cc999c085d6dff13ed164c140df
+GROWABLE_HEAP view checks in highs.js (pthreads + memory growth): 0
+PTHREAD_POOL_SIZE in highs.js: PTHREAD_POOL_SIZE=...`.") 
