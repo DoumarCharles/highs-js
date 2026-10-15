@@ -292,8 +292,25 @@ blocks also start working (e.g. `bad_alloc` becomes a HiGHS error rather than
 | diagnostic build (assertions) | same results, no assertion failures, no `unwind` |
 
 The single-solve times above are one model and one seed each, not a benchmark.
-Full benchmark and callback tests not yet run (awaiting approval after this
-root-cause report).
+
+**Interface, callback and lifecycle tests** (run 38691878055,
+`research/scripts/pthread-api-test.mjs`, each test a fresh process with a
+300 s hang limit; models `gapd_a5_j50_s4`, `lotsize_i6_t20_s2`):
+
+| area | result |
+|---|---|
+| threads actually used | threads 1/2/4 → HiGHS "Thread count 1/2/4 … 1/4/7 max workers"; 0/1/3 pthreads running mid-solve; CPU/wall 1.10/1.91/2.84 |
+| callbacks: logging, mipSolution, mipImprovingSolution, mipLogging, mipInterrupt, mipCutPool, mipUserSolution (each alone and all together, 4 threads) | all called only on the main JS thread (0 off-thread calls); solution vectors full length; valid; production gap reached. simplexInterrupt / ipmInterrupt are not called during MIP (same as single-thread) |
+| mipInterrupt stopping a running solve | status `interrupted`, 1–2 ms latency, solution still valid, all pthreads released; next solve normal. Interrupt at the first call (before any incumbent) also clean |
+| mipUserSolution injection | callback fires and `setSolution` returns OK, but the injected optimum is **not adopted** — identical on the single-thread baseline: the known highs-js `main` issue fixed on branch `fix-callback-user-solution`, not a threading effect |
+| 10 repeated create/run/dispose cycles, 4 threads | all valid at the gap; 3 pthreads running every time; dispose 0.1–1.5 ms; pool never above 4 workers |
+| solver reset | `clearSolver` + new seed, and `options.reset()`: valid at the gap |
+| changing `threads` on a live model | fails cleanly (HiGHS status −1: the global scheduler is fixed until every model using it is disposed); works after dispose. Two live models share one scheduler |
+| legacy `highs.solve()` with 4 threads | optimal, valid |
+| terminating the hosting Worker mid-solve (nested workers) | OS thread count back to the pre-solve value; a new Worker solves normally |
+| C++ exception in HiGHS (malformed LP: reader throws and catches) | proper `HighsError`; the single-thread baseline **aborts** (`RuntimeError: Aborted()`) |
+| **out of memory** (shared memory capped at 40/64/96 MB; uncapped control fine) | **not safe.** Allocation failing on the main thread: a raw C++ exception (`WebAssembly.Exception`) escapes `model.run()` — HiGHS does not convert it to an error status. On a worker thread: `RuntimeError: unreachable` / `Aborted()`, then `dispose()` throws `unwind`. Diagnostic build at 64 MB: hung until killed (300 s). The runtime sometimes still solves a tiny model afterwards, but its state cannot be trusted. Treat any OOM as fatal for that solver instance (recreate the worker/module). The single-thread baseline always aborts |
+
 
 ## 4b. Summary of experiments
 
