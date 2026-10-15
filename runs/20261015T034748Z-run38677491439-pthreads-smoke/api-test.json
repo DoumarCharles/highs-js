@@ -1,0 +1,121 @@
+{
+  "module": "dist/wasm-pthreads/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "threads-1",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":1,\"hardwareThreads\":4,\"maxWorkers\":1,\"parallelSearch\":\"off\"} (expected 1 threads, 1 workers); pthreads running during solve 0 (expected 0); CPU/wall 1.10; optimal in 18.1 s; valid true",
+      "loadMs": 126.312004,
+      "ms": 18301.061517000002
+    },
+    {
+      "name": "threads-2",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 884.828171000001
+    },
+    {
+      "name": "threads-4",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 883.3397149999983
+    },
+    {
+      "name": "callbacks-all",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 908.6329970000006
+    },
+    {
+      "name": "interrupt",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 899.7394430000022
+    },
+    {
+      "name": "repeated-solves",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 1167.597299000001
+    },
+    {
+      "name": "rerun-and-thread-change",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 1156.1529480000027
+    },
+    {
+      "name": "two-models",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 1129.4936659999985
+    },
+    {
+      "name": "legacy-solve",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 1140.9725959999996
+    },
+    {
+      "name": "terminate-worker",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 5419.608751
+    },
+    {
+      "name": "callback-logging",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 908.0968380000013
+    },
+    {
+      "name": "callback-simplexInterrupt",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 882.8003459999964
+    },
+    {
+      "name": "callback-ipmInterrupt",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 895.5412240000005
+    },
+    {
+      "name": "callback-mipSolution",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 900.6401459999979
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 902.915022000001
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 892.5994299999948
+    },
+    {
+      "name": "callback-mipInterrupt",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 894.7670970000036
+    },
+    {
+      "name": "callback-mipCutPool",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 892.7091700000019
+    },
+    {
+      "name": "callback-mipUserSolution",
+      "ok": false,
+      "details": "exception: thrown string \"unwind\"; stderr: ",
+      "ms": 902.7557470000029
+    }
+  ]
+}
