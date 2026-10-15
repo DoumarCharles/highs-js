@@ -458,11 +458,18 @@ if (!isMainThread && process.argv.includes("--in-worker")) {
     let r;
     if (child.error?.code === "ETIMEDOUT") r = { ok: false, details: "HUNG: killed after 300 s" };
     else if (child.status !== 0) r = { ok: false, details: `process exit ${child.status} signal ${child.signal}: ${(child.stderr || "").slice(-2500)}` };
+    else {
+      try {
+        r = JSON.parse(child.stdout.trim().split("\n").pop());
+      } catch {
+        r = { ok: false, details: `no result from child (exit 0); stdout: ${(child.stdout || "").slice(-600)}; stderr: ${(child.stderr || "").slice(-1500)}` };
+      }
+    }
     if (name.startsWith("oom")) r.informational = true;
-    else r = JSON.parse(child.stdout.trim().split("\n").pop());
     tests.push({ name, ...r, ms });
     console.log(`${r.ok ? "PASS" : "FAIL"} ${name} (${(ms / 1000).toFixed(1)} s): ${r.details}`);
+    // Written after every test, so a later failure never loses earlier results.
+    fs.mkdirSync(path.dirname(args.out), { recursive: true });
+    fs.writeFileSync(args.out, JSON.stringify({ module: args.module, cpus: os.cpus().length, tests }, null, 2));
   }
-  fs.mkdirSync(path.dirname(args.out), { recursive: true });
-  fs.writeFileSync(args.out, JSON.stringify({ module: args.module, cpus: os.cpus().length, tests }, null, 2));
 }
