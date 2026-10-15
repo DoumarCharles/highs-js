@@ -224,6 +224,77 @@ repetitions, ABBA.
 Interpretation: memory growth costs nothing measurable in V8; HiGHS's
 allocation pattern is not the bottleneck.
 
+### Experiment 4 — WebAssembly pthreads, 4 threads (in progress; approved 2026-10-14)
+
+**Build (`variant pthreads`, `research/build-variant.sh`).** Baseline unchanged.
+
+- Every HiGHS object, the bridge and the link use `-pthread`. Evidence from
+  `build-info`: object target features `+atomics,+bulk-memory` (baseline
+  `-shared-mem`); final memory imported as **shared**, 16 MB initial, 2 GB
+  maximum; `HConfig.h` has `HIGHS_NO_DEFAULT_THREADS` undefined; CMake
+  "Found Threads: TRUE".
+- Thread demand: HiGHS's executor creates `threads − 1` pthreads (the calling
+  thread is worker 0); the ⌈1.7 × threads⌉ MIP search workers are tasks, not
+  threads. `PTHREAD_POOL_SIZE=4` (threads = 4 needs 3), `STRICT=2`, 4 MB thread
+  stacks. A research-only post-js (`research/pthreads-probe.js`) reports the
+  pool, because in Node Emscripten silently creates extra workers when the pool
+  is short, which would deadlock a browser.
+- Two highs-js glue adaptations, in generated copies only (`src/` untouched):
+  1. `post.js` / `extended.js` call native functions as soon as the module
+     loads; pthread workers run the same script before they have the Wasm
+     instance, so these layers are wrapped in `if (!ENVIRONMENT_IS_PTHREAD)`.
+  2. The extended API rejects `thread|parallel|concurr` options by design; the
+     threaded copy lifts `thread|parallel` only.
+
+**Failure with threads ≥ 2 and root cause.** Every real solve with
+`threads` ≥ 2 threw Emscripten's internal `unwind` out of `model.run()`
+(trivial models that presolve away, and `threads = 1`, worked). Diagnostic
+build (`pthreads-dbg`: `-sASSERTIONS=2 -sPTHREADS_DEBUG=1 --profiling-funcs`,
+run 38684565460) showed:
+
+- a pthread worker aborted with `Exception thrown, but exception catching is
+  not enabled`;
+- the main thread was waiting for a stolen task —
+  `HighsPrimalHeuristics::RENS → solveSubMip → HighsMipSolver::run →
+  HighsTaskExecutor::sync_stolen_task → condition_variable::wait →
+  emscripten_futex_wait → _emscripten_yield` — noticed the crashed thread and
+  threw `unwind` from `emscripten_exit_with_live_runtime()` to tear down its
+  stack.
+
+HiGHS's scheduler cancels stolen tasks by **throwing `HighsTask::Interrupt`**
+(`TaskGroup` destructor → `HighsSplitDeque::checkInterrupt`, caught in
+`runStolenTask`; `HiGHS/highs/parallel/HighsParallel.h`, `HighsSplitDeque.h`).
+highs-js builds with Emscripten's default (exception catching disabled), so the
+throw aborts the worker. Single-thread solves never steal tasks and never
+throw. Ruled out: pool exhaustion (only `threads − 1` workers ever started,
+pool never grew), proxying/event-loop blocking (ordinary futex wait), the JS
+wrapper (it never sees the error), callbacks (same failure with only
+`mipLogging`).
+
+**Fix:** `-fwasm-exceptions` (native WebAssembly exception handling) for every
+HiGHS object and the link, pthreads variants only. No HiGHS source change;
+`unwind` is not caught anywhere. Evidence: object feature `+exception-handling`,
+one exception tag in `highs.wasm`. Side effects: HiGHS's other `try/catch`
+blocks also start working (e.g. `bad_alloc` becomes a HiGHS error rather than
+`RuntimeError: Aborted()`); requires Wasm exception handling in the browser
+(Chrome 95+, Firefox 100+, Safari 15.2+). Binary 3,531,385 → 3,767,382 bytes
+(+6.7 %), gzip 1,213,959 → 1,276,075 (+5.1 %).
+
+**Verification (run 38685199004, `gapd_a5_j50_s4` / `lotsize_i6_t20_s2`,
+4-vCPU runner):**
+
+| check | result |
+|---|---|
+| threads = 1 | HiGHS: "Thread count 1 … 1 max workers, parallel search off"; 0 pthreads running; optimal in 15.5 s, 1,179 nodes (same path as the single-thread build); valid; gap reached |
+| threads = 2 | "Thread count 2 … 4 max workers, parallel search on"; 1 pthread running; CPU/wall 1.90; optimal in 4.9 s, 593 nodes; valid; gap reached |
+| threads = 4 | "Thread count 4 … 7 max workers, parallel search on"; 3 pthreads running; CPU/wall 2.91; optimal in 7.2 s, 997 nodes; valid; gap reached |
+| 10 repeated 4-thread create/run/dispose cycles | all optimal, valid, gap reached; 3 pthreads running mid-solve every time; CPU/wall 2.5–2.9; dispose 0.1–3 ms; pool never above 4 workers; 0 running after each dispose |
+| diagnostic build (assertions) | same results, no assertion failures, no `unwind` |
+
+The single-solve times above are one model and one seed each, not a benchmark.
+Full benchmark and callback tests not yet run (awaiting approval after this
+root-cause report).
+
 ## 4b. Summary of experiments
 
 | # | Variant | What changed | Time vs baseline (geo-mean) | Paths | Size | Verdict |
