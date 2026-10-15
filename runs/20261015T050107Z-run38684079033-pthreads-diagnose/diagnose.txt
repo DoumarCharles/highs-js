@@ -1,0 +1,174 @@
+=== dist/wasm-pthreads model=tiny threads=1 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=tiny threads=2 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.02
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=tiny threads=4 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 1 row; 2 cols; 2 nonzeros; 2 integer variables (0 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+00]
+[out]   Cost    [1e+00, 2e+00]
+[out]   Bound   [3e+00, 3e+00]
+[out]   RHS     [4e+00, 4e+00]
+[out] Presolving model
+[out] Presolve reductions: rows 0(-1); columns 0(-2); nonzeros 0(-2) - Reduced to empty
+[out] Presolve: Optimal
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      8
+[out]   Dual bound        8
+[out]   Gap               0% (tolerance: 62.5%)
+[out]   P-D integral      0
+[out]   Solution status   feasible
+[out]   Timing            0.01
+[out]   Max sub-MIP depth 0
+[out]   Nodes             0
+[out]   Repair LPs        0
+[out]   LP iterations     0
+run returned 7 mipLogging callbacks 1 nodes 0
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=gapd_a5_j50_s4 threads=1 ===
+pthread stats after load {"running":0,"unused":4,"total":4}
+[out] Running HiGHS 1.15.1 (git hash: 04024d7): Copyright (c) 2026 under MIT licence terms
+[out] Includes third-party software components, see THIRD_PARTY_NOTICES.md for full details
+calling run
+[out] MIP highs-js-1 has 55 rows; 250 cols; 500 nonzeros; 250 integer variables (250 binary)
+[out] Coefficient ranges:
+[out]   Matrix  [1e+00, 1e+02]
+[out]   Cost    [4e+00, 1e+02]
+[out]   Bound   [1e+00, 1e+00]
+[out]   RHS     [1e+00, 5e+02]
+[out] Presolving model
+[out] Presolve reductions: rows 55(-0); columns 250(-0); nonzeros 500(-0) - Not reduced
+[out] Objective function is integral with scale 1
+[out] 
+[out] Solving MIP model with:
+[out]    Thread count 1 (of 4 threads). Using 1 max workers. Parallel search off
+[out] 
+[out] Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[out]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[out]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[out]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[out] 
+[out]         Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+[out] Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+[out] 
+[out] 
+[out] Solving report
+[out]   Model             highs-js-1
+[out]   Status            Optimal
+[out]   Primal bound      3090
+[out]   Dual bound        3089
+[out]   Gap               0.0324% (tolerance: 0.162%)
+[out]   P-D integral      0.128850878844
+[out]   Solution status   feasible
+[out]   Timing            18.77
+[out]                         MIP    time [calls] = 0.02 [1]
+[out]                         subMIP time [calls] = 0.10 [81]
+[out]                         MIP    time [calls] = 16.47 [1]
+[out]                         subMIP time [calls] = 2.15 [64]
+[out]                         MIP    time [calls] = 0.00 [1]
+[out]                         subMIP time [calls] = 0.00 [81]
+[out]   Max sub-MIP depth 8
+[out]   Nodes             1179
+[out]   Repair LPs        0
+[out]   LP iterations     113947
+run returned 7 mipLogging callbacks 12 nodes 1179
+disposed {"running":0,"unused":4,"total":4}
+exit code 0
+node exit status 0
+=== dist/wasm-pthreads model=gapd_a5_j50_s4 threads=2 ===
