@@ -67,7 +67,7 @@ jobs:
     needs: config
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         variant: ${{ fromJSON(needs.config.outputs.variants) }}
     steps:
@@ -91,7 +91,9 @@ jobs:
             exit 1
           }
       - name: Smoke test
-        run: node research/scripts/smoke.cjs "dist/${{ matrix.variant }}/highs.js"
+        # Diagnostic (-dbg) builds are uploaded even when the smoke test fails.
+        continue-on-error: ${{ endsWith(matrix.variant, '-dbg') }}
+        run: node --trace-uncaught research/scripts/smoke.cjs "dist/${{ matrix.variant }}/highs.js"
       - uses: actions/upload-artifact@v4
         with:
           name: wasm-${{ matrix.variant }}
@@ -120,6 +122,7 @@ jobs:
 
   bench:
     needs: [config, build-wasm, build-native]
+    if: always() && needs.config.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 330
     permissions:
@@ -145,14 +148,19 @@ jobs:
         if: needs.config.outputs.diagnose == 'true'
         run: |
           mkdir -p results
+          printf 'Maximize\n obj: x + 2 y\nSubject To\n c1: x + y <= 4\nBounds\n 0 <= x <= 3\nGenerals\n x y\nEnd\n' > models/tiny.lp
           for b in dist/wasm-*; do
             [ -f "$b/highs.js" ] || continue
-            for t in 1 2 4; do
-              echo "=== $b threads=$t ===" | tee -a results/diagnose.txt
-              timeout 120 node --trace-uncaught research/scripts/repro-threads.cjs "$b/highs.js" models/gapd_a5_j50_s4.lp $t 5 2>&1 \
-                | grep -v "^\[out\] *[A-Z ] *[0-9]" | tail -n 60 | tee -a results/diagnose.txt || true
+            for m in tiny gapd_a5_j50_s4; do
+              for t in 1 2 4; do
+                echo "=== $b model=$m threads=$t ===" | tee -a results/diagnose.txt
+                timeout 120 node --trace-uncaught --stack-trace-limit=60 research/scripts/repro-threads.cjs "$b/highs.js" "models/$m.lp" $t 5 \
+                  > results/diag-one.txt 2>&1; echo "node exit status $?" >> results/diag-one.txt
+                grep -v "^\[out\] *[A-Z ] *[0-9]" results/diag-one.txt | tail -n 150 | tee -a results/diagnose.txt
+              done
             done
           done
+          rm -f results/diag-one.txt
       - name: WebAssembly interface and callback tests
         if: needs.config.outputs.api_test == 'true'
         run: |

@@ -7,7 +7,11 @@ const fail = (what) => {
   console.log(`::error::smoke: ${text}`);
   process.exit(1);
 };
-process.on("uncaughtException", fail);
+// Print the full trace (stderr) before the annotation for uncaught throws.
+process.on("uncaughtException", (e, origin) => {
+  console.error(`uncaught (${origin}):`, typeof e === "string" ? `thrown string "${e}"` : e);
+  fail(e);
+});
 process.on("unhandledRejection", fail);
 const lp = "Maximize\n obj: x + 2 y\nSubject To\n c1: x + y <= 4\nBounds\n 0 <= x <= 3\nGenerals\n x y\nEnd\n";
 let loadHighs;
@@ -23,12 +27,20 @@ loadHighs({ printErr: (s) => errors.push(s) })
     // Threaded options only for the pthreads build (it carries the probe).
     const threaded = typeof highs.researchPthreadStats === "function";
     const optionSets = threaded ? [{ threads: 1 }, { threads: 4, parallel: "on" }, {}] : [{}];
-    for (const options of optionSets) {
-      const result = highs.solve(lp, options);
-      results.push({ options, status: result.Status, objective: result.ObjectiveValue });
-      if (result.Status !== "Optimal" || result.ObjectiveValue !== 8) fail(`${JSON.stringify(results)} stderr: ${errors.join(" | ")}`);
-    }
-    console.log("smoke ok", JSON.stringify(results), threaded ? JSON.stringify(highs.researchPthreadStats()) : "");
-    process.exit(0);
+    // Each solve runs in its own setImmediate callback, so a throw is
+    // synchronous and uncaught: --trace-uncaught then shows the real site.
+    const next = (i) => {
+      if (i === optionSets.length) {
+        console.log("smoke ok", JSON.stringify(results), threaded ? JSON.stringify(highs.researchPthreadStats()) : "");
+        process.exit(0);
+      }
+      setImmediate(() => {
+        const result = highs.solve(lp, optionSets[i]);
+        results.push({ options: optionSets[i], status: result.Status, objective: result.ObjectiveValue });
+        if (result.Status !== "Optimal" || result.ObjectiveValue !== 8) fail(`${JSON.stringify(results)} stderr: ${errors.join(" | ")}`);
+        next(i + 1);
+      });
+    };
+    next(0);
   })
   .catch(fail);
