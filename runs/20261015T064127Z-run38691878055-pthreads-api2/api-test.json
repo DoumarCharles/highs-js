@@ -1,0 +1,207 @@
+{
+  "module": "dist/wasm-pthreads/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "threads-1",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":1,\"hardwareThreads\":4,\"maxWorkers\":1,\"parallelSearch\":\"off\"} (expected 1 threads, 1 workers); pthreads running during solve 0 (expected 0); CPU/wall 1.10; optimal in 18.6 s, 1179 nodes, 113947 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 140.32172500000001,
+      "ms": 18801.359235
+    },
+    {
+      "name": "threads-2",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":2,\"hardwareThreads\":4,\"maxWorkers\":4,\"parallelSearch\":\"on\"} (expected 2 threads, 4 workers); pthreads running during solve 1 (expected 1); CPU/wall 1.91; optimal in 5.9 s, 593 nodes, 79062 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 135.89811,
+      "ms": 6149.859399999998
+    },
+    {
+      "name": "threads-4",
+      "ok": true,
+      "details": "HiGHS header {\"threadCount\":4,\"hardwareThreads\":4,\"maxWorkers\":7,\"parallelSearch\":\"on\"} (expected 4 threads, 7 workers); pthreads running during solve 3 (expected 3); CPU/wall 2.84; optimal in 8.9 s, 997 nodes, 116801 LP iterations; valid true; gap reached true; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 134.007242,
+      "ms": 9139.898821999996
+    },
+    {
+      "name": "callbacks-all",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"logging\":46,\"simplexInterrupt\":0,\"ipmInterrupt\":0,\"mipSolution\":10,\"mipImprovingSolution\":7,\"mipLogging\":9,\"mipInterrupt\":110,\"mipCutPool\":1,\"mipUserSolution\":60}; off-main-thread 0; solution vector lengths [250] (model 250); valid true; gap reached true",
+      "loadMs": 131.509738,
+      "ms": 9221.055761000003
+    },
+    {
+      "name": "interrupt",
+      "ok": true,
+      "details": "status interrupted; interrupt latency 2 ms; solution valid true; pthreads before dispose {\"running\":3,\"unused\":1,\"total\":4}, after {\"running\":0,\"unused\":4,\"total\":4}; next solve optimal valid true",
+      "loadMs": 127.648366,
+      "ms": 15433.458570999996
+    },
+    {
+      "name": "repeated-solves",
+      "ok": true,
+      "details": "statuses optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal,optimal; gap reached true,true,true,true,true,true,true,true,true,true; nodes 2211,2129,1819,1633,1403,2168,1919,1916,1739,1290; pthreads running mid-solve 3,3,3,3,3,3,3,3,3,3; CPU/wall 2.91,2.65,2.79,2.60,2.81,2.83,2.63,2.52,2.75,2.63; ms 11978,9814,9647,9162,9048,11415,9341,10934,8949,8868; dispose ms 0.6,0.2,0.2,0.3,0.2,0.2,0.1,0.2,0.2,0.2; max workers 4; OS threads after 11",
+      "loadMs": 130.890285,
+      "ms": 99423.632324
+    },
+    {
+      "name": "rerun-and-thread-change",
+      "ok": true,
+      "details": "run1 optimal valid true; run2 optimal valid true; threads 4→2 without dispose: throws \"run failed with HiGHS status -1\"; after dispose threads=2: optimal valid true, CPU/wall 1.67",
+      "loadMs": 137.466066,
+      "ms": 34070.62316799999
+    },
+    {
+      "name": "two-models",
+      "ok": true,
+      "details": "A timeLimit; B (shares A's scheduler) timeLimit valid true; B re-run after A disposed: timeLimit valid true; pthreads now {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 129.498146,
+      "ms": 15248.767001
+    },
+    {
+      "name": "interrupt-immediate",
+      "ok": true,
+      "details": "status interrupted after 72 ms, 1 interrupt call(s); pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}; next solve optimal, valid true, gap reached true",
+      "loadMs": 119.243585,
+      "ms": 12165.347947000002
+    },
+    {
+      "name": "user-solution",
+      "ok": true,
+      "details": "queries 60; first offer {\"status\":{\"status\":0}}; injected objective 3089.999999999977; first improving objectives [3503,3231,3113.000000000002]; log lines with source X 0; accepted false; final optimal, valid true",
+      "loadMs": 116.07816500000001,
+      "ms": 17400.639096999977
+    },
+    {
+      "name": "solver-reset",
+      "ok": true,
+      "details": "[{\"label\":\"first\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":2211},{\"label\":\"clearSolver+seed7\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":1916},{\"label\":\"options.reset\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":2211}]; pthreads after dispose {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 123.02847499999999,
+      "ms": 34553.796302
+    },
+    {
+      "name": "malformed-lp",
+      "ok": true,
+      "details": "malformed LP -> HighsError: readModel failed with HiGHS status -1; next solve optimal valid true gap true",
+      "loadMs": 132.379335,
+      "ms": 12246.460867999995
+    },
+    {
+      "name": "oom-threads-1-cap40",
+      "ok": true,
+      "details": "cap 40 MB, threads 1: run threw Exception: [object WebAssembly.Exception] after 1473 ms (0 MIP log lines, last node count 0; peak pthreads {\"running\":0,\"unused\":4,\"total\":4}); dispose ok; tiny solve afterwards: Optimal 8; stderr: ",
+      "loadMs": 133.390603,
+      "informational": true,
+      "ms": 1683.369749000005
+    },
+    {
+      "name": "oom-threads-4-cap40",
+      "ok": true,
+      "details": "cap 40 MB, threads 4: run threw Exception: [object WebAssembly.Exception] after 298 ms (0 MIP log lines, last node count 0; peak pthreads {\"running\":3,\"unused\":1,\"total\":4}); dispose ok; tiny solve afterwards: Optimal 8; stderr: ",
+      "loadMs": 129.090779,
+      "informational": true,
+      "ms": 504.7946750000119
+    },
+    {
+      "name": "oom-threads-4-cap64",
+      "ok": true,
+      "details": "cap 64 MB, threads 4: run threw RuntimeError: unreachable after 1341 ms (0 MIP log lines, last node count 0; peak pthreads {\"running\":3,\"unused\":1,\"total\":4}); dispose threw unwind; tiny solve afterwards: Optimal 8; stderr: Aborted()",
+      "loadMs": 123.37034299999999,
+      "informational": true,
+      "ms": 1546.756577000022
+    },
+    {
+      "name": "oom-threads-4-cap96",
+      "ok": true,
+      "details": "cap 96 MB, threads 4: run threw Exception: [object WebAssembly.Exception] after 3548 ms (0 MIP log lines, last node count 0; peak pthreads {\"running\":3,\"unused\":1,\"total\":4}); dispose ok; tiny solve afterwards: Optimal 8; stderr: ",
+      "loadMs": 128.81007,
+      "informational": true,
+      "ms": 3752.7386309999856
+    },
+    {
+      "name": "oom-threads-4-nocap",
+      "ok": true,
+      "details": "cap none (2 GB), threads 4: run returned optimal after 26082 ms (0 MIP log lines, last node count 0; peak pthreads {\"running\":3,\"unused\":1,\"total\":4}); dispose ok; tiny solve afterwards: Optimal 8; stderr: ",
+      "loadMs": 122.92978199999999,
+      "informational": true,
+      "ms": 26284.933373000007
+    },
+    {
+      "name": "legacy-solve",
+      "ok": true,
+      "details": "[{\"status\":\"Optimal\",\"obj\":57667.99999999942,\"valid\":true,\"ms\":12084},{\"status\":\"Optimal\",\"obj\":57667.99999999942,\"valid\":true,\"ms\":11632}]; pthreads {\"running\":0,\"unused\":4,\"total\":4}",
+      "loadMs": 124.63121199999999,
+      "ms": 23893.59311800002
+    },
+    {
+      "name": "terminate-worker",
+      "ok": true,
+      "details": "OS threads: before 11, during 4-thread solve 16, 1.5 s after terminate 11, at end 11; terminate() resolved in 12 ms (3.0 s into the solve); second Worker: optimal valid true in 8.6 s",
+      "loadMs": 127.186904,
+      "ms": 15099.272557999997
+    },
+    {
+      "name": "callback-logging",
+      "ok": true,
+      "details": "status optimal in 9.2 s; calls {\"logging\":46}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 139.00245099999998,
+      "ms": 9439.954631
+    },
+    {
+      "name": "callback-simplexInterrupt",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"simplexInterrupt\":0}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 130.237351,
+      "ms": 9183.261883000028
+    },
+    {
+      "name": "callback-ipmInterrupt",
+      "ok": true,
+      "details": "status optimal in 8.9 s; calls {\"ipmInterrupt\":0}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 129.370468,
+      "ms": 9094.936936000013
+    },
+    {
+      "name": "callback-mipSolution",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"mipSolution\":10}; off-main-thread 0; solution vector lengths [250] (model 250); valid true; gap reached true",
+      "loadMs": 126.746951,
+      "ms": 9225.469320999982
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"mipImprovingSolution\":7}; off-main-thread 0; solution vector lengths [250] (model 250); valid true; gap reached true",
+      "loadMs": 127.426079,
+      "ms": 9209.493001000024
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": true,
+      "details": "status optimal in 9.1 s; calls {\"mipLogging\":9}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 118.355618,
+      "ms": 9313.817637
+    },
+    {
+      "name": "callback-mipInterrupt",
+      "ok": true,
+      "details": "status optimal in 9.1 s; calls {\"mipInterrupt\":110}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 137.420304,
+      "ms": 9283.910925999982
+    },
+    {
+      "name": "callback-mipCutPool",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"mipCutPool\":1}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 125.45935699999998,
+      "ms": 9252.945109000022
+    },
+    {
+      "name": "callback-mipUserSolution",
+      "ok": true,
+      "details": "status optimal in 9.0 s; calls {\"mipUserSolution\":60}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 129.962872,
+      "ms": 9227.469096000015
+    }
+  ]
+}

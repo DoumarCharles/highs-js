@@ -1,0 +1,34 @@
+{
+  "module": "dist/wasm-pthreads-dbg/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "oom-threads-1-cap40",
+      "ok": false,
+      "details": "exception: RuntimeError: unreachable\n    at highs.wasm.undefined_weak:thread-local initialization routine for HighsTaskExecutor::threadLocalWorkerDequePtr (wasm://wasm/highs.wasm-011a2a7e:wasm-function[33]:0x51db2)\n    at abort (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:15051)\n    at Object.get (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:8569)\n    at oomTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:332:103)\n    at oom-threads-1-cap40 (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test; stderr: growMemory: Attempted to grow heap from 41943040 bytes to 46137344 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 44892160 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / Failed to grow the heap from 41943040 bytes to 44892160 bytes, not enough memory! / growMemory: Attempted to grow heap from 41943040 bytes to 50331648 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 49348608 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 49348608 bytes, but go",
+      "informational": true,
+      "ms": 1806.881432
+    },
+    {
+      "name": "oom-threads-4-cap40",
+      "ok": false,
+      "details": "exception: RuntimeError: unreachable\n    at highs.wasm.undefined_weak:thread-local initialization routine for HighsTaskExecutor::threadLocalWorkerDequePtr (wasm://wasm/highs.wasm-011a2a7e:wasm-function[33]:0x51db2)\n    at abort (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:15051)\n    at Object.get (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:8569)\n    at oomTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:332:103)\n    at oom-threads-4-cap40 (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test; stderr: growMemory: Attempted to grow heap from 41943040 bytes to 46137344 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 44040192 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / Failed to grow the heap from 41943040 bytes to 44040192 bytes, not enough memory! / growMemory: Attempted to grow heap from 41943040 bytes to 50331648 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 46137344 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 41943040 bytes to 44040192 bytes, but go",
+      "informational": true,
+      "ms": 534.464197
+    },
+    {
+      "name": "oom-threads-4-cap64",
+      "ok": false,
+      "details": "HUNG: killed after 300 s",
+      "informational": true,
+      "ms": 300112.386517
+    },
+    {
+      "name": "oom-threads-4-cap96",
+      "ok": false,
+      "details": "exception: RuntimeError: unreachable\n    at highs.wasm.undefined_weak:thread-local initialization routine for HighsTaskExecutor::threadLocalWorkerDequePtr (wasm://wasm/highs.wasm-011a2a7e:wasm-function[33]:0x51db2)\n    at abort (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:15051)\n    at Object.get (/home/runner/work/highs-js/highs-js/dist/wasm-pthreads-dbg/highs.js:1:8569)\n    at oomTest (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:332:103)\n    at oom-threads-4-cap96 (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test; stderr: growMemory: Attempted to grow heap from 100663296 bytes to 112132096 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 100663296 bytes to 112132096 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / Failed to grow the heap from 100663296 bytes to 112132096 bytes, not enough memory! / growMemory: Attempted to grow heap from 100663296 bytes to 120848384 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 100663296 bytes to 112132096 bytes, but got error: RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded / growMemory: Attempted to grow heap from 100663296 bytes to 112132096 b",
+      "informational": true,
+      "ms": 4137.609970999998
+    }
+  ]
+}

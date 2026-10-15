@@ -1,0 +1,19 @@
+{
+  "label": "pthreads-api2",
+  "candidate": "pthreads",
+  "builds": [
+    "baseline",
+    "pthreads",
+    "pthreads-dbg"
+  ],
+  "wasmVariants": "baseline=baseline",
+  "apiTest": true,
+  "diagnose": false,
+  "summarizer": "threads",
+  "seeds": "0",
+  "reps": 1,
+  "tiers": "none",
+  "timeLimit": 300,
+  "nativeConfigs": "none",
+  "nativeReps": 1
+}

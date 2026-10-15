@@ -1,0 +1,55 @@
+{
+  "module": "dist/wasm-baseline/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "interrupt-immediate",
+      "ok": true,
+      "details": "status interrupted after 58 ms, 1 interrupt call(s); pthreads after dispose null; next solve optimal, valid true, gap reached true",
+      "loadMs": 31.688021000000003,
+      "ms": 14400.033911999999
+    },
+    {
+      "name": "user-solution",
+      "ok": true,
+      "details": "queries 337; first offer {\"status\":{\"status\":0}}; injected objective 3090.0000000000005; first improving objectives [3503,3231,3113.000000000002]; log lines with source X 0; accepted false; final optimal, valid true",
+      "loadMs": 31.918445,
+      "ms": 35940.0609
+    },
+    {
+      "name": "solver-reset",
+      "ok": true,
+      "details": "[{\"label\":\"first\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":1930},{\"label\":\"clearSolver+seed7\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":2386},{\"label\":\"options.reset\",\"status\":\"optimal\",\"valid\":true,\"gap\":true,\"nodes\":1930}]; pthreads after dispose null",
+      "loadMs": 35.49858999999999,
+      "ms": 45541.976898999994
+    },
+    {
+      "name": "malformed-lp",
+      "ok": true,
+      "details": "malformed LP -> RuntimeError: Aborted(undefined). Build with -sASSERTIONS for more info.; next solve optimal valid true gap true",
+      "loadMs": 33.369949999999996,
+      "ms": 14511.278493000005
+    },
+    {
+      "name": "legacy-solve",
+      "ok": true,
+      "details": "[{\"status\":\"Optimal\",\"obj\":57674.99999999999,\"valid\":true,\"ms\":14300},{\"status\":\"Optimal\",\"obj\":57674.99999999999,\"valid\":true,\"ms\":13903}]; pthreads null",
+      "loadMs": 32.380139,
+      "ms": 28280.410745999994
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": true,
+      "details": "status optimal in 18.2 s; calls {\"mipImprovingSolution\":7}; off-main-thread 0; solution vector lengths [250] (model 250); valid true; gap reached true",
+      "loadMs": 35.421535999999996,
+      "ms": 18295.06820499999
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": true,
+      "details": "status optimal in 18.3 s; calls {\"mipLogging\":12}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 31.70038,
+      "ms": 18424.25149699999
+    }
+  ]
+}
