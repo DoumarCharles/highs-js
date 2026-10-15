@@ -26,7 +26,8 @@ case "$variant" in
     EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-flto -DCMAKE_CXX_FLAGS=-flto) ;;
   # WebAssembly SIMD (auto-vectorization, no fast-math; path identity is measured, not assumed).
   simd)
-    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-msimd128 -DCMAKE_CXX_FLAGS=-msimd128)
+    EXTRA_CMAKE_ARGS=(-DCMAKE_C_FLAGS=-msimd128 -DCMAKE_CXX_FLAGS=-msimd128
+      "-DCMAKE_PROJECT_INCLUDE=$root/research/simd-exclude.cmake")
     EXTRA_LINK_FLAGS=(-msimd128) ;;
   # Larger initial heap (256 MB instead of 16 MB): fewer memory.grow steps.
   initmem256)
@@ -56,7 +57,7 @@ emcmake cmake --fresh "$root/HiGHS" \
   "${EXTRA_CMAKE_ARGS[@]}" 2>&1 | tee cmake-configure.log
 
 start=$(date +%s)
-emmake make -j"$(nproc)" libhighs > make.log 2>&1 || { grep -E "error|Error" make.log | head -n 40; tail -n 40 make.log; exit 1; }
+emmake make -k -j"$(nproc)" libhighs > make.log 2>&1 || { grep -E "error|Error" make.log | head -n 40; tail -n 40 make.log; exit 1; }
 tail -n 3 make.log
 compile_s=$(( $(date +%s) - start ))
 
@@ -93,7 +94,7 @@ rm -rf "$probe"
   echo "extra link flags: ${EXTRA_LINK_FLAGS[*]:-(none)}"
   echo "emcc: $(emcc --version | head -n 1)"
   echo "HiGHS commit: $(git -C "$root/HiGHS" rev-parse HEAD)"
-  grep -E "Build type|IPO / LTO" cmake-configure.log || true
+  grep -E "Build type|IPO / LTO|perf-research:" cmake-configure.log || true
   echo "CMAKE_CXX_FLAGS (cache): $(grep -E '^CMAKE_CXX_FLAGS:' CMakeCache.txt | cut -d= -f2-)"
   echo "CMAKE_CXX_FLAGS_RELEASE (cache): $(grep -E '^CMAKE_CXX_FLAGS_RELEASE:' CMakeCache.txt | cut -d= -f2-)"
   echo "HighsMipSolver.cpp.o magic: $magic"
