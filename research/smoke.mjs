@@ -23,7 +23,9 @@ const expectHash = hashIndex >= 0 ? args[hashIndex + 1] : null;
 // Accept either a build/ directory or a package root containing build/.
 const dir = existsSync(join(target, "highs.js")) ? target : join(target, "build");
 const require = createRequire(import.meta.url);
-const quiet = { print: () => {}, printErr: () => {} };
+// Emscripten uses the options object passed to a loader as that instance's
+// Module object, so every loader call needs a fresh one.
+const quiet = () => ({ print: () => {}, printErr: () => {} });
 
 const LP = `Maximize
  obj: x + 2 y
@@ -123,9 +125,9 @@ async function phase(label, load) {
   }
 }
 
-const version = await phase("cjs", () => require(join(dir, "highs.js"))(quiet));
+const version = await phase("cjs", () => require(join(dir, "highs.js"))(quiet()));
 const esmVersion = await phase("esm", async () =>
-  (await import(pathToFileURL(join(dir, "highs.mjs")).href)).default(quiet),
+  (await import(pathToFileURL(join(dir, "highs.mjs")).href)).default(quiet()),
 );
 check("cjs/esm report the same version", version && JSON.stringify(version) === JSON.stringify(esmVersion));
 

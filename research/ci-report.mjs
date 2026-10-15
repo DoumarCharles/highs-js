@@ -62,8 +62,9 @@ annotate(
   [`exit code: ${code}`, ...summaryLines, "", "tail:", ...lines.slice(-25)].join("\n"),
 );
 
-if (code !== "0") {
-  const body = relevant();
+// Short logs (e.g. the smoke-test JSON) are reported whole, pass or fail.
+if (code !== "0" || log.length <= 2 * CHUNK) {
+  const body = log.length <= 2 * CHUNK ? log : relevant();
   for (let index = 0; index < MAX_CHUNKS && index * CHUNK < body.length; index += 1) {
     annotate("notice", `${name} detail ${index + 1}`, body.slice(index * CHUNK, (index + 1) * CHUNK));
   }
