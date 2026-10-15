@@ -224,7 +224,7 @@ repetitions, ABBA.
 Interpretation: memory growth costs nothing measurable in V8; HiGHS's
 allocation pattern is not the bottleneck.
 
-### Experiment 4 — WebAssembly pthreads, 4 threads (in progress; approved 2026-10-14)
+### Experiment 4 — WebAssembly pthreads, 4 threads: **gate passed for 4 threads** (approved 2026-10-14)
 
 **Build (`variant pthreads`, `research/build-variant.sh`).** Baseline unchanged.
 
@@ -312,6 +312,112 @@ The single-solve times above are one model and one seed each, not a benchmark.
 | **out of memory** (shared memory capped at 40/64/96 MB; uncapped control fine) | **not safe.** Allocation failing on the main thread: a raw C++ exception (`WebAssembly.Exception`) escapes `model.run()` — HiGHS does not convert it to an error status. On a worker thread: `RuntimeError: unreachable` / `Aborted()`, then `dispose()` throws `unwind`. Diagnostic build at 64 MB: hung until killed (300 s). The runtime sometimes still solves a tiny model afterwards, but its state cannot be trusted. Treat any OOM as fatal for that solver instance (recreate the worker/module). The single-thread baseline always aborts |
 
 
+**Benchmark** (run 38694414415, commit 649b5d7; raw data and full tables on
+`perf-research-results` under `runs/20261015T080851Z-run38694414415-pthreads-bench/`,
+`analysis.md`). 8 synthetic models × seeds 0, 1, 2 × 2 repetitions × 4
+configurations = 192 solves, one at a time in fresh Node processes on one
+4-vCPU runner, configuration order rotating. Configurations: `baseline` (the
+production single-thread build, unchanged options), `pt1` (threaded build,
+`threads=1`), `pt2` (`threads=2, parallel=on`), `pt4` (`threads=4,
+parallel=on`). 300 s time limit; a run stopped by it is *censored* and never
+counted as solved.
+
+Outcomes: no crashes, hangs, invalid solutions or objective mismatches in any
+of the 192 runs. Six censored runs, all on `mkp_n200_m10_s2`: baseline and pt1
+seed 2 (one of two repetitions each — that path takes ~290 s and ends either
+just inside or just outside the limit), and pt2 seeds 0 and 1 (both
+repetitions). Every solution passed the independent checker; objectives of
+different configurations differ by at most 0.95 × the stopping gap (each stops
+anywhere inside its gap).
+
+| | baseline | pt1 | pt2 | pt4 |
+|---|---|---|---|---|
+| good / censored / failed runs | 47 / 1 / 0 | 47 / 1 / 0 | 44 / 4 / 0 | **48 / 0 / 0** |
+| total solve time, all 48 runs | 1,229 s | 1,245 s | 1,772 s | **382 s** |
+| total end-to-end time (Node start, load, parse, solve, check, dispose) | 1,233 s | 1,252 s | 1,779 s | **389 s** |
+| sum of the 24 model/seed medians, censored counted as 300 s | 615 s | 623 s | 886 s | **191 s** |
+| total CPU time / solve wall time | 1.05 | 1.05 | 1.77 | 2.73 |
+| active pthreads during solve (median, max) | 0, 0 | 0, 0 | 1, 1 | 3, 3 |
+| peak Wasm memory MB, median / max | 67 / 314 | 63 / 298 | 83 / 1,479 | 144 / 207 |
+| max process RSS MB, median / max | 186 / 408 | 253 / 484 | 276 / 1,605 | 319 / 397 |
+| RSS right after loading | 70 MB | 146 MB | 146 MB | 146 MB |
+| load + instantiate (median / max) | 24 / 47 ms | 84 / 110 ms | 84 / 99 ms | 85 / 104 ms |
+| dispose (median) | 0.1 ms | 0.1 ms | 0.4 ms | 0.5 ms |
+
+Paired speed-up against the baseline (model × seed, each side the median of
+its repetitions; > 1 is faster):
+
+| | pairs | geo-mean | median | worst | best | faster |
+|---|---|---|---|---|---|---|
+| pt1, all, both sides solved | 23 | 0.98× | 0.98× | 0.95× | 1.01× | 5 of 23 |
+| pt2, all, both solved | 21 | 1.40× | 1.38× | 0.49× | 3.07× | 16 of 21 |
+| pt2, hard, both solved | 12 | 1.32× | 1.56× | 0.49× | 2.62× | 7 of 12 |
+| pt4, all, both solved | 23 | **1.70×** | 1.85× | 0.13× | 4.42× | 21 of 23 |
+| pt4, hard, both solved | 14 | **1.92×** | **2.28×** | 0.13× | 4.42× | 12 of 14 |
+| pt4, medium, both solved | 9 | 1.40× | 1.37× | 1.19× | 2.01× | 9 of 9 |
+
+Censored pairs (excluded above, reported with bounds): `mkp_n200_m10_s2`
+seed 2 — baseline ≥ 294 s, pt4 23.7 s (≥ 12.4×), pt2 89 s (≥ 3.3×); seeds 0
+and 1 — baseline 22.5 s and 28.2 s, **pt2 did not finish in 300 s (≤ 0.07×,
+≤ 0.09×)**, with up to 1.5 GB Wasm memory. Counting censored runs at 300 s
+(a bound in each direction), pt4 over all 24 pairs: geo-mean 1.84×, hard
+2.18×, faster in 22 of 24; pt2: geo-mean 1.15×, hard 0.97×, slower than 0.9×
+in 5 of 24.
+
+Worst pt4 cases: `mkp_n150_m10_s1` seed 2 (baseline 1.0 s on a lucky 50-node
+path, pt4 8.4 s, 0.13×) and `gapd_a8_j48_s2` seed 0 (0.95×). All other pt4
+pairs are 1.19× or better.
+
+2 versus 4 threads (paired, both solved): 4 threads faster in 10 of 13 hard
+pairs (time ratio pt2/pt4 geo-mean 1.53×, median 1.90×) but only 5 of 9
+medium pairs (0.92×); counting censored at 300 s, pt4 faster in 17 of 24
+(geo-mean 1.60×). 2 threads is not a smaller version of 4: HiGHS runs ⌈1.7 ×
+threads⌉ = 4 search workers on 2 threads, and on `mkp_n200` that search
+wandered (≥ 128,000 nodes vs 3,600 at 4 threads).
+
+Effort: pt1 reproduces the baseline's exact search (identical nodes and LP
+iterations in every pair); its cost is 2 % (median 0.98×), the price of the
+threaded build itself (atomics, shared memory, Wasm exception handling).
+Threaded runs change the search path, as expected, but are deterministic:
+pt4 took the same path in both repetitions of all 24 pairs (time spread
+median 1.6 %, max 6.9 %).
+
+Start-up: the threaded build loads in ~85 ms instead of ~24 ms (+60 ms,
+starting four pthread workers) and uses ~76 MB more RSS before solving.
+
+### Decision gate (WebAssembly pthreads)
+
+**Passed for 4 threads.** On these synthetic models, 4-thread WebAssembly is
+substantially and repeatably faster than the production single-thread build:
+~1.9–2.2× (geo-mean, hard models, with and without censored bounds), 2.3–2.5×
+median, faster in 12 of 14 hard pairs, all 48 runs solved, deterministic, no
+stability problems, production callbacks (mipLogging, mipImprovingSolution,
+mipInterrupt) correct and on the main thread. This matches native HiGHS's
+scaling on the same models (run 38658782912: 2.15–3.36× at 4 threads).
+
+Not passed for 2 threads: inconsistent, with two > 10× regressions.
+
+Recommendation: proceed to a **separate browser-compatibility experiment**,
+with these conditions carried forward:
+
+- `threads = 4`, `parallel = on` only; fall back to the existing
+  single-thread build when fewer than 4 cores are available, or when
+  cross-origin isolation / SharedArrayBuffer / Wasm exception handling is
+  unavailable. Never 2 threads.
+- Requirements to verify in Chrome, Firefox and Safari: cross-origin isolation
+  (COOP/COEP — GitHub Pages needs a service-worker shim), SharedArrayBuffer,
+  nested Workers from the app's solver Worker, Wasm exception handling,
+  shared-memory growth, terminating the solver Worker.
+- Memory: 4 threads roughly doubled peak memory here (~144 vs ~67 MB median).
+  The application's full-year models already use ~550 MB single-threaded, so
+  the 2 GB maximum (or a 4 GB maximum) must be tested on real models before any
+  integration. Out of memory remains fatal to the solver instance (tested).
+- mipUserSolution injection is unaffected by threading but still not adopted
+  on highs-js `main` (fixed on `fix-callback-user-solution`).
+- These are synthetic models; the speed-up on real full-year Form 945 models
+  must be measured privately (never in this public repository) before deciding
+  on integration.
+
 ## 4b. Summary of experiments
 
 | # | Variant | What changed | Time vs baseline (geo-mean) | Paths | Size | Verdict |
@@ -320,12 +426,15 @@ The single-solve times above are one model and one seed each, not a benchmark.
 | 2 | `simd` | `-msimd128` (except HighsSearch.cpp: clang crash) | −0.7 % | identical | +1.5 % | rejected |
 | 3 | `initmem256` | 256 MB initial heap | −0.2 % | identical | 0 | rejected |
 | — | native threads | `parallel=on`, 4 threads (native) | 2.15–3.36× faster (9/10 hard) | different | — | only material lever |
+| 4 | `pthreads`, threads = 4 | Wasm pthreads + `-fwasm-exceptions`, parallel MIP search | **1.92× hard, 1.70× all (paired, solved); 2.18× hard incl. censored bounds** | different, deterministic | +6.7 % wasm | **gate passed** |
+| 4 | `pthreads`, threads = 2 | same build, 2 threads | 1.32× hard; two pairs ≥ 10× slower (censored) | different | — | rejected |
+| 4 | `pthreads`, threads = 1 | same build, 1 thread | 0.98× (cost of the threaded build) | identical | — | reference |
 | — | native threads | `parallel=on`, 2 threads (native) | 1.48× geo-mean, 0.43–4.2× | different | — | inconsistent |
 
 Code-generation ceiling: native single-thread does 1.25× the LP iterations per
 second of Wasm. Build-flag work can at most close that ~20 % gap.
 
-## 4c. Recommended next step (not started; needs approval)
+## 4c. Recommended next step (superseded by the experiment 4 decision gate above)
 
 Wasm pthreads with `parallel=on` and 4 threads, as a separate experimental
 build. Scope of a first feasibility test, synthetic models only:
