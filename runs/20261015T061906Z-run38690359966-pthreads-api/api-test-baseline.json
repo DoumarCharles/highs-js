@@ -1,0 +1,47 @@
+{
+  "module": "dist/wasm-baseline/highs.js",
+  "cpus": 4,
+  "tests": [
+    {
+      "name": "interrupt-immediate",
+      "ok": true,
+      "details": "status interrupted after 55 ms, 1 interrupt call(s); pthreads after dispose null; next solve optimal, valid true, gap reached true",
+      "loadMs": 33.43791900000001,
+      "ms": 14652.582477
+    },
+    {
+      "name": "user-solution",
+      "ok": true,
+      "details": "queries 337; first offer {\"status\":{\"status\":0}}; injected objective 3090.0000000000005; first improving objectives [3503,3231,3113.000000000002]; log lines with source X 0; accepted false; final optimal, valid true",
+      "loadMs": 32.245059,
+      "ms": 37193.977035
+    },
+    {
+      "name": "solver-reset",
+      "ok": false,
+      "details": "exception: TypeError: model.resetOptions is not a function\n    at solver-reset (file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:196:11)\n    at file:///home/runner/work/highs-js/highs-js/research/scripts/pthread-api-test.mjs:435:36; stderr: ",
+      "ms": 31573.932489000006
+    },
+    {
+      "name": "malformed-lp",
+      "ok": true,
+      "details": "malformed LP -> RuntimeError: Aborted(undefined). Build with -sASSERTIONS for more info.; next solve optimal valid true gap true",
+      "loadMs": 37.709665,
+      "ms": 14462.869622999991
+    },
+    {
+      "name": "callback-mipImprovingSolution",
+      "ok": true,
+      "details": "status optimal in 18.3 s; calls {\"mipImprovingSolution\":7}; off-main-thread 0; solution vector lengths [250] (model 250); valid true; gap reached true",
+      "loadMs": 35.992895,
+      "ms": 18354.359996
+    },
+    {
+      "name": "callback-mipLogging",
+      "ok": true,
+      "details": "status optimal in 18.3 s; calls {\"mipLogging\":12}; off-main-thread 0; solution vector lengths [] (model 250); valid true; gap reached true",
+      "loadMs": 31.930365000000002,
+      "ms": 18387.055445000005
+    }
+  ]
+}
