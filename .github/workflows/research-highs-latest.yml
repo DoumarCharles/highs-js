@@ -70,12 +70,15 @@ jobs:
           # run the legacy and extended suites independently to see every failure.
           step test-legacy node tests/test.js
           step test-extended node --test tests/extended/*.test.cjs
+          step legacy-matrix node research/legacy-matrix.cjs
           step test-package npm run test:package
           step smoke node research/smoke.mjs build --expect-hash "$(git -C HiGHS rev-parse --short=7 HEAD)"
           # Published production reference, loaded side by side from its own directory.
           mkdir -p reference
           step reference-fetch bash -c 'cd reference && npm pack highs@1.15.3 && tar -xzf highs-1.15.3.tgz'
           step smoke-reference node research/smoke.mjs reference/package --expect-hash 04024d7
+          step probe node research/behavior-probe.mjs build
+          step probe-reference node research/behavior-probe.mjs reference/package
           {
             ls -l build/highs.js build/highs.mjs build/highs.wasm reference/package/build/highs.wasm
             sha256sum build/highs.js build/highs.mjs build/highs.wasm reference/package/build/highs.wasm
@@ -106,6 +109,14 @@ jobs:
       - name: Report extended suite (diagnostic)
         if: always()
         run: node research/ci-report.mjs test-extended research-logs/test-extended.log research-logs/test-extended.code
+      - name: Report legacy matrix (diagnostic)
+        if: always()
+        run: node research/ci-report.mjs legacy-matrix research-logs/legacy-matrix.log research-logs/legacy-matrix.code
+      - name: Report behaviour probes
+        if: always()
+        run: |
+          node research/ci-report.mjs probe research-logs/probe.log research-logs/probe.code
+          node research/ci-report.mjs probe-reference research-logs/probe-reference.log research-logs/probe-reference.code
       - name: Report test:package
         if: always()
         run: node research/ci-report.mjs test:package research-logs/test-package.log research-logs/test-package.code
